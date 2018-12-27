@@ -31,7 +31,7 @@ select * from USERS;
 
 CREATE TABLE ORDERS (
     id serial PRIMARY KEY,
-    user_id integer references USERS
+    user_id integer references USERS ON DELETE RESTRICT
 );
 
 insert into ORDERS (user_id) values (1);
