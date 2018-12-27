@@ -28,3 +28,9 @@ libraryDependencies += "io.spray" %% "spray-json" % "1.3.4"
 libraryDependencies += "org.json4s" %% "json4s-native" % "3.2.11"
 libraryDependencies += "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.9.6"
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.9.6"
+
+libraryDependencies += "org.postgresql" % "postgresql" % "9.4.1208"
+libraryDependencies += "io.getquill" %% "quill-core" % "2.6.0"
+libraryDependencies += "io.getquill" %% "quill-async-postgres" % "2.6.0"
+libraryDependencies += "io.getquill" %% "quill" % "2.6.0"
+

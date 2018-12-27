@@ -8,9 +8,6 @@ trait CatalogService {
   def getAllGoods(): Future[List[Good]]
 }
 
-class CatalogServiceImpl extends CatalogService {
-  override def getAllGoods(): Future[List[Good]] = Future.successful(List(
-    Good("Булка", 45),
-    Good("Кекс", 60)
-  ))
+class CatalogServiceImpl(dao: DAO) extends CatalogService {
+  override def getAllGoods(): Future[List[Good]] = dao.getAllGoods()
 }

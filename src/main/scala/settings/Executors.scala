@@ -1,12 +1,20 @@
 package settings
 
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
+import java.util.concurrent.ExecutorService
 
-trait Executors {
+import scala.concurrent.ExecutionContext
 
-  def mainServiceContext(): ExecutionContextExecutor = {
-    val pool = java.util.concurrent.Executors.newFixedThreadPool(4)
-    ExecutionContext.fromExecutor(pool)
-  }
-
+trait Context[+E <: ExecutorService] {
+  implicit val executor: E
+  implicit val context = ExecutionContext.fromExecutor(executor)
 }
+
+trait MainContext extends Context[ExecutorService] {
+  override implicit val executor = java.util.concurrent.Executors.newWorkStealingPool()
+}
+
+trait DBContext extends Context[ExecutorService] {
+  override implicit val executor = java.util.concurrent.Executors.newWorkStealingPool()
+}
+
+
