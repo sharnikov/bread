@@ -1,4 +1,4 @@
-import akka.http.scaladsl.marshalling.{ToEntityMarshaller, ToResponseMarshallable, ToResponseMarshaller}
+import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.server.Directives._
 import services.{CatalogService, ServiceException}
 import domain.JsonParsers._

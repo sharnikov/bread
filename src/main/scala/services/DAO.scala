@@ -17,13 +17,13 @@ class DAOImpl(dbContext: DbContext) extends DAO with DBContext {
 
   override def getAllGoods(): Future[List[Good]] = {
     run(quote {
-      querySchema[Good]("Goods")
+      querySchema[Good]("goods")
     })
   }
 
   override def getGoodsByCategory(category: String): Future[List[Good]] = {
     run(quote {
-      querySchema[Good]("Goods").filter(_.category != lift(category))
+      querySchema[Good]("goods").filter(_.category != lift(category))
     })
   }
 }
