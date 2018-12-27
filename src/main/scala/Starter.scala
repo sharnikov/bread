@@ -2,7 +2,6 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import io.getquill.{Escape, PostgresAsyncContext}
 import services.{CatalogServiceImpl, DAOImpl}
 import settings.{DatabaseFactory, MainContext}
 import settings.config.{AppSettings, Settings}
@@ -21,5 +20,4 @@ object Starter extends App with MainContext {
   val routes = new Routes(catalogService)
 
   Http().bindAndHandle(routes.getRoutes(), settings.akkaSettings().host, settings.akkaSettings().port)
-
 }
