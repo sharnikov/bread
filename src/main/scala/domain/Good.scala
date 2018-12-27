@@ -1,3 +1,3 @@
 package domain
 
-case class Good(name: String, category: String, price: Double)
+case class Good(id: Int, name: String, category: String, price: Double)
