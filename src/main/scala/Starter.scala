@@ -2,7 +2,8 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import services.{CatalogServiceImpl, DAOImpl}
+import dao.DAOImpl
+import services.CatalogServiceImpl
 import settings.{DatabaseFactory, MainContext}
 import settings.config.{AppSettings, Settings}
 

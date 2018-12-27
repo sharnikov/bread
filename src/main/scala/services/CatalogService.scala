@@ -1,5 +1,6 @@
 package services
 
+import dao.DAO
 import domain.Good
 
 import scala.concurrent.Future
