@@ -4,7 +4,7 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import dao.DAOImpl
 import services.CatalogServiceImpl
-import settings.{DatabaseFactory, MainContext}
+import settings.{Database, MainContext}
 import settings.config.{AppSettings, Settings}
 
 object Starter extends App with MainContext {
@@ -14,7 +14,9 @@ object Starter extends App with MainContext {
   implicit val system: ActorSystem = ActorSystem("bread")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  val dao = new DAOImpl(DatabaseFactory.getQuillContext())
+  val database = new Database()
+
+  val dao = new DAOImpl(database)
 
   val catalogService = new CatalogServiceImpl(dao)
 
