@@ -2,14 +2,15 @@ package settings
 
 import domain.{Good, Item, Order}
 import io.getquill.{Escape, PostgresAsyncContext}
+import settings.config.Settings
 
 object DatabaseUtils {
   type DbContext = PostgresAsyncContext[Escape]
 }
 
-class Database {
+class Database(settings: Settings) {
 
-  val context = new PostgresAsyncContext[Escape](Escape, "bread.db")
+  val context = new PostgresAsyncContext[Escape](Escape, settings.databaseSettings().databaseConfigName())
 
   import context._
 

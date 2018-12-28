@@ -14,7 +14,7 @@ object Starter extends App with MainContext {
   implicit val system: ActorSystem = ActorSystem("bread")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  val database = new Database()
+  val database = new Database(settings)
 
   val dao = new DAOImpl(database)
 
