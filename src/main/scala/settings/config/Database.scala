@@ -17,5 +17,5 @@ class DatabaseSettings(config: Config) extends Database {
   override def user(): String = config.getString("user")
   override def password(): String = config.getString("password")
   override def database(): String = config.getString("database")
-  override def databaseConfigName(): String = "db.bread"
+  override def databaseConfigName(): String = "bread.db"
 }
