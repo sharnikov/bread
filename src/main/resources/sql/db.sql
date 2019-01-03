@@ -24,7 +24,8 @@ CREATE TABLE USERS
 );
 
 insert into USERS (login, name, secondname) values
-('Bulkaed', 'Андрей', 'Петров');
+('Bulkaed', 'Андрей', 'Петров')
+('Kekser', 'Вова', 'Путин');
 
 select * from USERS;
 ----------------------------------------
@@ -35,6 +36,7 @@ CREATE TABLE ORDERS (
 );
 
 insert into ORDERS (user_id) values (1);
+
 
 select * from ORDERS;
 ------------------------------------
@@ -55,3 +57,12 @@ select * from  ITEMS;
 
 -----------------------------
 select g.name, i.quantity from GOODS as g JOIN ITEMS as i on i.good_id = g.id join orders as o on o.id = i.order_id where o.id = 1
+
+
+---------------------------
+
+create type order_status AS ENUM ('NEW', 'DONE', 'IN_PROGRESS', 'REJECTED');
+
+alter table ITEMS add column status order_status not null default 'NEW';
+
+-----------------------------------
