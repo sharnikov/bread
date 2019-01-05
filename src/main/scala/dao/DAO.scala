@@ -30,13 +30,14 @@ class DAOImpl(database: Database) extends DAO with DBContext {
     run(quote {
       database.orders.filter(_.userId == lift(userId))
         .join(database.items).on((order, item) => order.id == item.orderId)
+        .filter { case (order, _) => order.id == lift(orderId)}
         .map { case (_, item) => item }
         .join(database.goods).on((item, good) => item.goodId == good.id)
         .map { case (item, good) => GoodsPack(item.quantity, good) }
     }).map { goodsWithQuantity =>
       FullOrder(
         userId = userId,
-        orderId = orderId,
+        orderId = Some(orderId),
         goods = goodsWithQuantity
       )
     }

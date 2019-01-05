@@ -17,4 +17,4 @@ case class User(id: Id, login: String, name: Option[String], secondName: Option[
 
 case class GoodsPack(quantity: Int, good: Good) extends Embedded
 
-case class FullOrder(userId: Id, orderId: Id, goods: List[GoodsPack])
+case class FullOrder(userId: Id, orderId: Option[Id], goods: List[GoodsPack])
