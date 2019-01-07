@@ -1,6 +1,7 @@
 import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.server.Directives._
 import domain.Domain._
+import domain.NewOrder
 import domain.JsonParsers._
 import services.{CatalogService, ServiceException}
 
@@ -25,6 +26,10 @@ class Routes(catalogService: CatalogService) {
         parameters('userId.as[Id], 'orderId.as[Id]) { (userId, orderId) =>
           completeResult(catalogService.getOrderById(userId, orderId))
         }
+      }
+    } ~ post {
+      entity(as[NewOrder]) { order =>
+        completeResult(catalogService.addOrder(order))
       }
     }
 

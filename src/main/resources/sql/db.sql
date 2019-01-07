@@ -62,7 +62,6 @@ select g.name, i.quantity from GOODS as g JOIN ITEMS as i on i.good_id = g.id jo
 ---------------------------
 
 create type order_status AS ENUM ('NEW', 'DONE', 'IN_PROGRESS', 'REJECTED');
-
 alter table ITEMS add column status order_status not null default 'NEW';
 
 -----------------------------------

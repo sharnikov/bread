@@ -8,7 +8,6 @@ trait Database {
   def user(): String
   def password(): String
   def database(): String
-  def databaseConfigName(): String
 }
 
 class DatabaseSettings(config: Config) extends Database {
@@ -17,5 +16,4 @@ class DatabaseSettings(config: Config) extends Database {
   override def user(): String = config.getString("user")
   override def password(): String = config.getString("password")
   override def database(): String = config.getString("database")
-  override def databaseConfigName(): String = "bread.db"
 }

@@ -1,18 +1,37 @@
 package settings
 
-import domain.{Good, Item, Order}
+import domain.OrderStatus.Status
+import domain.{Good, Item, Order, OrderStatus}
+import io.getquill.context.async.SqlTypes
 import io.getquill.{Escape, PostgresAsyncContext}
-import settings.config.Settings
+import org.postgresql.util.PGobject
 
-object DatabaseUtils {
+object Database {
+
   type DbContext = PostgresAsyncContext[Escape]
-}
 
-class Database(settings: Settings) {
-
-  val context = new PostgresAsyncContext[Escape](Escape, settings.databaseSettings().databaseConfigName())
+  val context = new PostgresAsyncContext[Escape](Escape, "bread.db")
 
   import context._
+
+  implicit val statusDecoder: Decoder[Status] =
+    decoder(
+      {
+        case value =>  OrderStatus.withNameWithDefault(value.toString)
+      },
+      SqlTypes.VARCHAR
+    )
+
+  implicit val statusEncoder: Encoder[Status] =
+    encoder(
+      value => {
+        val pgObject = new PGobject()
+        pgObject.setType("TEXT")
+        pgObject.setValue(value.toString)
+        pgObject
+      },
+      SqlTypes.VARCHAR
+    )
 
   val goods = quote {
     querySchema[Good]("goods")
@@ -23,6 +42,9 @@ class Database(settings: Settings) {
   }
 
   val orders = quote {
-    querySchema[Order]("orders", _.id -> "id", _.userId -> "user_id")
+    querySchema[Order]("orders", _.id -> "id", _.userId -> "user_id", _.status -> "status")
   }
+
 }
+
+

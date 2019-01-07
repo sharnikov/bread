@@ -3,6 +3,8 @@ package dao
 import domain.Domain.Id
 import domain._
 import settings.{DBContext, Database}
+import settings.Database.context._
+import settings.Database._
 
 import scala.concurrent.Future
 
@@ -10,36 +12,42 @@ trait DAO {
   def getAllGoods(): Future[List[Good]]
   def getGoodsByCategory(category: String): Future[List[Good]]
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
+  def addOrder(order: Order, items: List[Item]): Future[Option[Id]]
 }
 
-class DAOImpl(database: Database) extends DAO with DBContext {
-
-  import database.context._
+class DAOImpl extends DAO with DBContext {
 
   override def getAllGoods(): Future[List[Good]] = {
-    run(database.goods)
+    run(Database.goods)
   }
 
   override def getGoodsByCategory(category: String): Future[List[Good]] = {
-    run(quote {
-      database.goods.filter(_.category != lift(category))
-    })
+    run(Database.goods.filter(_.category != lift(category)))
   }
 
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = {
-    run(quote {
-      database.orders.filter(_.userId == lift(userId))
-        .join(database.items).on((order, item) => order.id == item.orderId)
-        .filter { case (order, _) => order.id == lift(orderId)}
+    run(
+      Database.orders.filter(_.userId == lift(userId))
+        .join(Database.items).on((order, item) => order.id.exists(item.orderId.contains) && order.id.contains(lift(orderId)))
         .map { case (_, item) => item }
-        .join(database.goods).on((item, good) => item.goodId == good.id)
-        .map { case (item, good) => GoodsPack(item.quantity, good) }
-    }).map { goodsWithQuantity =>
+        .join(Database.goods).on((item, good) => item.goodId == good.id)
+        .map { case (item, good) => FullGoodPack(item.quantity, good) }
+    ).map { goodsWithQuantity =>
       FullOrder(
         userId = userId,
-        orderId = Some(orderId),
-        goods = goodsWithQuantity
+        id = orderId,
+        packs = goodsWithQuantity
       )
     }
   }
+
+  override def addOrder(order: Order, items: List[Item]): Future[Option[Id]] = {
+    transaction { ec =>
+      for {
+        orderId <- run(Database.orders.insert(lift(order)).returning(_.id))
+        _ <- run(liftQuery(items.map(_.copy(orderId = orderId))).foreach(item => Database.items.insert(item)))
+      } yield orderId
+    }
+  }
 }
+
