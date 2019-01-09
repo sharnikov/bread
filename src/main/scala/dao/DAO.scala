@@ -42,12 +42,16 @@ class DAOImpl extends DAO with DBContext {
   }
 
   override def addOrder(order: Order, items: List[Item]): Future[Option[Id]] = {
+
+    def addIdToItems(orderId: Option[Id]) = items.map(_.copy(orderId = orderId))
+
     transaction { ec =>
       for {
         orderId <- run(Database.orders.insert(lift(order)).returning(_.id))
-        _ <- run(liftQuery(items.map(_.copy(orderId = orderId))).foreach(item => Database.items.insert(item)))
+        _ <- run(liftQuery(addIdToItems(orderId)).foreach(item => Database.items.insert(item)))
       } yield orderId
     }
   }
+
 }
 

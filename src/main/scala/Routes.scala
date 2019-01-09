@@ -28,8 +28,10 @@ class Routes(catalogService: CatalogService) {
         }
       }
     } ~ post {
-      entity(as[NewOrder]) { order =>
-        completeResult(catalogService.addOrder(order))
+      path ("add_order") {
+        entity(as[NewOrder]) { order =>
+          completeResult(catalogService.addOrder(order))
+        }
       }
     }
 

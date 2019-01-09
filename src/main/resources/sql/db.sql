@@ -58,10 +58,9 @@ select * from  ITEMS;
 -----------------------------
 select g.name, i.quantity from GOODS as g JOIN ITEMS as i on i.good_id = g.id join orders as o on o.id = i.order_id where o.id = 1
 
-
 ---------------------------
 
 create type order_status AS ENUM ('NEW', 'DONE', 'IN_PROGRESS', 'REJECTED');
-alter table ITEMS add column status order_status not null default 'NEW';
+alter table ORDERS add column status order_status not null default 'NEW';
 
 -----------------------------------

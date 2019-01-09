@@ -19,6 +19,8 @@ object OrderStatus extends Enumeration {
     values.find(_.toString.toLowerCase == name.toLowerCase()).getOrElse(UNKNOWN)
 }
 
+case class ResponseWithId(id: Id)
+
 case class Good(id: Id, name: String, category: String, price: Double) extends Embedded
 
 case class Order(id: Option[Id], userId: Id, status: Status)

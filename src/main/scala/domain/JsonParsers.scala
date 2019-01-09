@@ -4,6 +4,9 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 
 object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport {
+
+  implicit val idResponse = jsonFormat1(ResponseWithId)
+
   implicit val goodResponse = jsonFormat4(Good)
 
   implicit val fullGoodpack = jsonFormat2(FullGoodPack)
