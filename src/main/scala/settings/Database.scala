@@ -1,18 +1,37 @@
 package settings
 
+import com.github.mauricio.async.db.Configuration
+import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
+import com.github.mauricio.async.db.postgresql.pool.PostgreSQLConnectionFactory
+import com.github.mauricio.async.db.postgresql.util.URLParser
+import com.typesafe.config.{Config, ConfigFactory}
 import domain.OrderStatus.Status
 import domain.{Good, Item, Order, OrderStatus}
-import io.getquill.context.async.SqlTypes
+import io.getquill.context.async.{AsyncContextConfig, SqlTypes}
 import io.getquill.{Escape, PostgresAsyncContext}
 import org.postgresql.util.PGobject
 
-object Database {
+import scala.concurrent.ExecutionContext
+
+object Database extends DBContext {
 
   type DbContext = PostgresAsyncContext[Escape]
 
-  val context = new PostgresAsyncContext[Escape](Escape, "bread.db")
+  private val postgresConfig = PostgresConfig(ConfigFactory.load(), context)
 
-  import context._
+  case class PostgresConfig(config: Config, executionContext: ExecutionContext)
+    extends AsyncContextConfig[PostgreSQLConnection](
+      config = config,
+      connectionFactory = (configuration: Configuration) => new PostgreSQLConnectionFactory(
+        configuration = configuration,
+        executionContext = executionContext
+      ),
+      uriParser = URLParser
+    )
+
+  val pgContext: PostgresAsyncContext[Escape] = new PostgresAsyncContext(Escape, postgresConfig.pool)
+
+  import pgContext._
 
   implicit val statusDecoder: Decoder[Status] =
     decoder(

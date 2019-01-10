@@ -4,7 +4,7 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
 import dao.DAOImpl
 import services.CatalogServiceImpl
-import settings.{Database, MainContext}
+import settings.MainContext
 import settings.config.{AppSettings, Settings}
 
 object Starter extends App with MainContext {
@@ -21,4 +21,5 @@ object Starter extends App with MainContext {
   val routes = new Routes(catalogService)
 
   Http().bindAndHandle(routes.getRoutes(), settings.akkaSettings().host, settings.akkaSettings().port)
+
 }
