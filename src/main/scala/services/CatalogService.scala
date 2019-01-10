@@ -2,6 +2,7 @@ package services
 
 import dao.DAO
 import domain.Domain.Id
+import domain.OrderStatus.Status
 import domain._
 import settings.ServiceContext
 
@@ -12,6 +13,7 @@ trait CatalogService {
   def getGoodsByCategory(category: String): Future[List[Good]]
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
   def addOrder(order: NewOrder): Future[ResponseWithId]
+  def changeStatus(orderId: Id, status: Status): Future[Unit]
 }
 
 class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
@@ -34,4 +36,6 @@ class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
 
     dao.addOrder(order, items).map(orderId => ResponseWithId(orderId.getOrElse(throw new DBException("Could not retrive orderId"))))
   }
+
+  override def changeStatus(orderId: Id, status: Status): Future[Unit] = dao.changeStatus(orderId, status)
 }

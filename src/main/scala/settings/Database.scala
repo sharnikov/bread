@@ -6,10 +6,11 @@ import com.github.mauricio.async.db.postgresql.pool.PostgreSQLConnectionFactory
 import com.github.mauricio.async.db.postgresql.util.URLParser
 import com.typesafe.config.{Config, ConfigFactory}
 import domain.OrderStatus.Status
-import domain.{Good, Item, Order, OrderStatus}
 import io.getquill.context.async.{AsyncContextConfig, SqlTypes}
 import io.getquill.{Escape, PostgresAsyncContext}
 import org.postgresql.util.PGobject
+import net.ceedubs.ficus.Ficus._
+import domain._
 
 import scala.concurrent.ExecutionContext
 
@@ -17,7 +18,7 @@ object Database extends DBContext {
 
   type DbContext = PostgresAsyncContext[Escape]
 
-  private val postgresConfig = PostgresConfig(ConfigFactory.load(), context)
+  private val postgresConfig = PostgresConfig(ConfigFactory.load("app").as[Config]("bread.db"), context)
 
   case class PostgresConfig(config: Config, executionContext: ExecutionContext)
     extends AsyncContextConfig[PostgreSQLConnection](

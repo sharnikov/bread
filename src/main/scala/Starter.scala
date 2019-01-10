@@ -9,7 +9,7 @@ import settings.config.{AppSettings, Settings}
 
 object Starter extends App with MainContext {
 
-  val settings: Settings = new AppSettings(ConfigFactory.load())
+  val settings: Settings = new AppSettings(ConfigFactory.load("app"))
 
   implicit val system: ActorSystem = ActorSystem("bread")
   implicit val materializer: ActorMaterializer = ActorMaterializer()

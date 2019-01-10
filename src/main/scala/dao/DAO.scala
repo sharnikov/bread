@@ -1,6 +1,7 @@
 package dao
 
 import domain.Domain.Id
+import domain.OrderStatus.Status
 import domain._
 import settings.{DBContext, Database}
 import settings.Database.pgContext._
@@ -13,6 +14,7 @@ trait DAO {
   def getGoodsByCategory(category: String): Future[List[Good]]
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
   def addOrder(order: Order, items: List[Item]): Future[Option[Id]]
+  def changeStatus(orderId: Id, status: Status): Future[Unit]
 }
 
 class DAOImpl extends DAO with DBContext {
@@ -53,5 +55,8 @@ class DAOImpl extends DAO with DBContext {
     }
   }
 
+  override def changeStatus(orderId: Id, status: Status): Future[Unit] = {
+    run(orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Unit)
+  }
 }
 

@@ -3,6 +3,7 @@ import akka.http.scaladsl.server.Directives._
 import domain.Domain._
 import domain.NewOrder
 import domain.JsonParsers._
+import domain.OrderStatus.Status
 import services.{CatalogService, ServiceException}
 
 import scala.concurrent.Future
@@ -31,6 +32,15 @@ class Routes(catalogService: CatalogService) {
       path ("add_order") {
         entity(as[NewOrder]) { order =>
           completeResult(catalogService.addOrder(order))
+        }
+      }
+    } ~ get {
+      path ("change_status") {
+        parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
+          onComplete(catalogService.changeStatus(orderId, status)) {
+            case Success(_) => complete("OK")
+            case Failure(exception) => failWith(new ServiceException("Can't update the status", exception))
+          }
         }
       }
     }
