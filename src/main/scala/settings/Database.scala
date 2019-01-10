@@ -9,7 +9,6 @@ import domain.OrderStatus.Status
 import io.getquill.context.async.{AsyncContextConfig, SqlTypes}
 import io.getquill.{Escape, PostgresAsyncContext}
 import org.postgresql.util.PGobject
-import net.ceedubs.ficus.Ficus._
 import domain._
 
 import scala.concurrent.ExecutionContext
@@ -18,7 +17,7 @@ object Database extends DBContext {
 
   type DbContext = PostgresAsyncContext[Escape]
 
-  private val postgresConfig = PostgresConfig(ConfigFactory.load("app").as[Config]("bread.db"), context)
+  private val postgresConfig = PostgresConfig(ConfigFactory.load("db"), context)
 
   case class PostgresConfig(config: Config, executionContext: ExecutionContext)
     extends AsyncContextConfig[PostgreSQLConnection](
