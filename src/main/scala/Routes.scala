@@ -1,10 +1,10 @@
 import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.server.Directives._
-import domain.Domain._
-import domain.NewOrder
-import domain.JsonParsers._
-import domain.OrderStatus.Status
 import services.{CatalogService, ServiceException}
+import domain.OrderStatus.Status
+import domain.JsonParsers._
+import domain.NewOrder
+import domain.Domain._
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -14,7 +14,6 @@ class Routes(catalogService: CatalogService) {
   def getRoutes() =
     get {
       path("all_goods") {
-//        throw new Exception("azazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaa")
         completeResult(catalogService.getAllGoods())
       }
     } ~ get {

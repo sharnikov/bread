@@ -1,9 +1,9 @@
 package domain
 
 import akka.http.scaladsl.unmarshalling.Unmarshaller
-import domain.Domain.Id
-import domain.OrderStatus.Status
 import io.getquill.Embedded
+import domain.OrderStatus.Status
+import domain.Domain.Id
 
 object Domain {
   type Id = Int
