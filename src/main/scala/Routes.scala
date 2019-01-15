@@ -14,6 +14,7 @@ class Routes(catalogService: CatalogService) {
   def getRoutes() =
     get {
       path("all_goods") {
+//        throw new Exception("azazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaaazazazazaa")
         completeResult(catalogService.getAllGoods())
       }
     } ~ get {

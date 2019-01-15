@@ -2,9 +2,10 @@ import sbt.librarymanagement._
 
 object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
 
-  private val typesafeAkkaVersion = "10.1.4"
+  private val typesafeAkkaVersion = "10.1.7"
   private val jacksonVersion = "2.9.6"
   private val quillVersion = "2.6.0"
+  private val streamsVersion = "2.5.19"
 
   val typesafeConfig = Seq(
     "com.typesafe" % "config" % "1.3.2",
@@ -19,13 +20,14 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
     "com.typesafe.akka" %% "akka-http" % typesafeAkkaVersion,
     "com.typesafe.akka" %% "akka-http-xml" % typesafeAkkaVersion,
     "com.typesafe.akka" %% "akka-http-spray-json" % typesafeAkkaVersion,
-    "com.typesafe.akka" %% "akka-stream" % "2.5.12",
-    "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M3",
-    "com.typesafe.akka" %% "akka-http-testkit" % "10.1.7" % Test
+    "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M3" exclude("com.typesafe.akka", "akka-actor"),
+    "com.typesafe.akka" %% "akka-stream" % streamsVersion,
+    "com.typesafe.akka" %% "akka-testkit" % streamsVersion % Test,
+    "com.typesafe.akka" %% "akka-http-testkit" % typesafeAkkaVersion % Test
   )
 
   val json = Seq(
-    "io.spray" %% "spray-json" % "1.3.4",
+    "io.spray" %% "spray-json" % "1.3.5",
     "org.json4s" %% "json4s-native" % "3.2.11",
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
     "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion
@@ -43,5 +45,5 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
     "org.scalamock" %% "scalamock" % "4.1.0" % Test
   )
 
-  val all = typesafeConfig ++ utilLibraries ++ akka ++ json ++ database ++ testing
+  val all = typesafeConfig ++ utilLibraries ++ testing ++ database ++ json ++ akka
 }
