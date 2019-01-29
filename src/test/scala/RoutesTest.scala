@@ -1,6 +1,5 @@
-import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpecLike, Matchers}
+import org.scalatest.FlatSpecLike
 import services.CatalogService
 import utils.FutureUtils
 import domain.JsonParsers._
@@ -8,7 +7,6 @@ import DomainTestData._
 import domain.{FullOrder, Good, ResponseWithId}
 import org.scalatest.Matchers
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import akka.http.scaladsl.server._
 
 class RoutesTest extends FlatSpecLike with Matchers with MockFactory with ScalatestRouteTest with FutureUtils {
 

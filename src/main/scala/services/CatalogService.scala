@@ -1,10 +1,12 @@
 package services
 
 import dao.DAO
+import domain._
 import domain.Domain.Id
 import domain.OrderStatus.Status
-import domain._
 import settings.ServiceContext
+import errors.AppError.VerboseServiceError
+import errors.ErrorCode
 
 import scala.concurrent.Future
 
@@ -34,7 +36,9 @@ class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
       quantity = pack.quantity
     ))
 
-    dao.addOrder(order, items).map(orderId => ResponseWithId(orderId.getOrElse(throw new DBException("Could not retrive orderId"))))
+    dao.addOrder(order, items).map(orderId => ResponseWithId(orderId.getOrElse(
+      throw new VerboseServiceError(ErrorCode.DataNotFound,"Could not retrieve orderId")
+    )))
   }
 
   override def changeStatus(orderId: Id, status: Status): Future[Unit] = dao.changeStatus(orderId, status)

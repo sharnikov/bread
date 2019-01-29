@@ -1,10 +1,15 @@
+import java.util.Date
+
 import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.server.Directives._
-import services.{CatalogService, ServiceException}
+import services.CatalogService
 import domain.OrderStatus.Status
 import domain.JsonParsers._
 import domain.NewOrder
 import domain.Domain._
+import errors.AppError.{BreadException, ServiceException}
+import errors.ErrorCode
+import spray.json.JsonFormat
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -39,15 +44,23 @@ class Routes(catalogService: CatalogService) {
         parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
           onComplete(catalogService.changeStatus(orderId, status)) {
             case Success(_) => complete("OK")
-            case Failure(exception) => failWith(new ServiceException("Can't update the status", exception))
+            case Failure(exception) => failWith(
+              new ServiceException("Can't update the status", exception)
+            )
           }
         }
       }
     }
 
-  private def completeResult[T](result: Future[T])(implicit marshaller: ToResponseMarshaller[T]) =
+  private def completeResult[T : JsonFormat](result: Future[T]) = {
+    import http.Response._
+
     onComplete(result) {
-      case Success(info) => complete(info)
-      case Failure(exception) => failWith(new ServiceException("Internal exception", exception))
+      case Success(info) => complete(success(info))
+      case Failure(exception) => failWith(
+        new BreadException(ErrorCode.InternalError, "Internal exception", exception)
+      )
     }
+  }
+
 }
