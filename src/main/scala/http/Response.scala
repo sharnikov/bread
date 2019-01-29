@@ -3,14 +3,15 @@ package http
 import java.util.Date
 
 import errors.AppError
-import spray.json.{JsObject, JsString, JsValue, JsonFormat, RootJsonWriter}
+import errors.AppError.ServiceException
+import spray.json.{JsObject, JsString, JsValue, JsonFormat, RootJsonFormat, RootJsonWriter}
 import http.TimeJsonProtocol._
 
 trait Response[+A]
 
 object Response {
 
-  implicit def jsonSuccessParser[T : JsonFormat]= new RootJsonWriter[SuccessfulResponse[T]] {
+  implicit def jsonSuccessParser[T](implicit payloadFormat : JsonFormat[T])= new RootJsonFormat[SuccessfulResponse[T]] {
 
       override def write(obj: SuccessfulResponse[T]): JsValue = {
         JsObject(
@@ -18,7 +19,23 @@ object Response {
           "time" -> dateFormatSerializator.write(obj.time)
         )
       }
+
+    override def read(json: JsValue): SuccessfulResponse[T] = json match {
+      case JsObject(fields) => pasreSuccesfulResponse(fields)
+      case _ => throw new ServiceException(s"Can't parse SuccessfulResponse in $json")
     }
+
+    private def pasreSuccesfulResponse(fields: Map[String, JsValue]) =
+      (for {
+        payload <- fields.get("payload")
+        time <- fields.get("time")
+      } yield {
+        SuccessfulResponse(
+          payload = payloadFormat.read(payload),
+          time = implicitly[JsonFormat[Date]]read(time)
+        )
+      }).getOrElse(throw new ServiceException(s"Can't parse SuccessfulResponse with fields = $fields"))
+  }
 
   implicit def jsonFailParser = new RootJsonWriter[FailedResponse] {
 
