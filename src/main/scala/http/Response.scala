@@ -1,26 +1,16 @@
 package http
 
-import java.text.SimpleDateFormat
 import java.util.Date
 
-import spray.json.DefaultJsonProtocol._
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import errors.AppError
-import akka.http.scaladsl.marshalling.ToResponseMarshaller
-import errors.AppError.ServiceException
-import spray.json.{DefaultJsonProtocol, JsArray, JsNumber, JsObject, JsString, JsValue, JsonFormat, RootJsonFormat}
+import spray.json.{JsObject, JsString, JsValue, JsonFormat, RootJsonWriter}
 import http.TimeJsonProtocol._
 
 trait Response[+A]
 
 object Response {
 
-  implicit def jsonSuccessParser[T : JsonFormat]: RootJsonFormat[SuccessfulResponse[T]] =
-    new RootJsonFormat[SuccessfulResponse[T]] {
-
-      override def read(json: JsValue): SuccessfulResponse[T] = json match {
-        case JsObject(fields) => parseResponse(fields)
-      }
+  implicit def jsonSuccessParser[T : JsonFormat]= new RootJsonWriter[SuccessfulResponse[T]] {
 
       override def write(obj: SuccessfulResponse[T]): JsValue = {
         JsObject(
@@ -28,23 +18,17 @@ object Response {
           "time" -> dateFormatSerializator.write(obj.time)
         )
       }
-
-      private def parseResponse(fields: Map[String, JsValue]): SuccessfulResponse[T] =
-        (for {
-          payload <- fields.get("payload")
-          time <- fields.get("time")
-        } yield {
-          SuccessfulResponse(
-            payload = payload.convertTo[T],
-            time = time.convertTo[Date]
-          )
-        }).getOrElse(throw new ServiceException(s"Can't parse SuccessfulResponse from the fields $fields"))
     }
 
-  implicit def jsonFailParser = new RootJsonFormat[FailedResponse] {
-    override def read(json: JsValue): FailedResponse = ???
+  implicit def jsonFailParser = new RootJsonWriter[FailedResponse] {
 
-    override def write(obj: FailedResponse): JsValue = ???
+    override def write(obj: FailedResponse): JsValue = {
+      JsObject(
+        "errorMessage" -> JsString(obj.error.message),
+        "errorCode" -> JsString(obj.error.code.toString),
+        "time" -> dateFormatSerializator.write(obj.time)
+      )
+    }
   }
 
   case class SuccessfulResponse[T](payload: T, time: Date) extends Response[T]

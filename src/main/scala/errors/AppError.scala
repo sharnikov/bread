@@ -15,6 +15,4 @@ object AppError {
 
   class VerboseServiceError(code: ErrorCode, message: String = "", cause: Throwable = null)
     extends BreadException(code, message, cause)
-
-
 }
