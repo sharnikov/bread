@@ -57,9 +57,9 @@ class Routes(catalogService: CatalogService) {
 
     onComplete(result) {
       case Success(info) => complete(success(info))
-      case Failure(exception) => failWith(
+      case Failure(exception) => complete(fail(
         new BreadException(ErrorCode.InternalError, "Internal exception", exception)
-      )
+      ))
     }
   }
 
