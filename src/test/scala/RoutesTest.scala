@@ -1,13 +1,14 @@
+import domain.{FullOrder, Good, OrderStatus, ResponseWithId}
+import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpecLike
+import org.scalatest.Matchers
 import services.CatalogService
 import utils.FutureUtils
 import domain.JsonParsers._
 import http.Response._
+import http.Completed
 import DomainTestData._
-import domain.{FullOrder, Good, ResponseWithId}
-import org.scalatest.Matchers
-import akka.http.scaladsl.testkit.ScalatestRouteTest
 
 class RoutesTest extends FlatSpecLike with Matchers with MockFactory with ScalatestRouteTest with FutureUtils {
 
@@ -20,6 +21,7 @@ class RoutesTest extends FlatSpecLike with Matchers with MockFactory with Scalat
     (catalogService.getOrderById _).when(userId, orderId).returns(DomainTestData.fullOrder)
     (catalogService.getGoodsByCategory _).when(category).returns(goodsList)
     (catalogService.addOrder _).when(DomainTestData.newOrder).returns(ResponseWithId(orderId))
+    (catalogService.changeStatus _).when(orderId, OrderStatus.REJECTED).returns(Completed)
   }
 
   "all_goods" should "return goods" in new mocks {
@@ -47,5 +49,4 @@ class RoutesTest extends FlatSpecLike with Matchers with MockFactory with Scalat
       responseAs[SuccessfulResponse[ResponseWithId]].payload shouldBe ResponseWithId(orderId)
     }
   }
-
 }

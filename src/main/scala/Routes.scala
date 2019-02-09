@@ -4,8 +4,9 @@ import domain.OrderStatus.Status
 import domain.JsonParsers._
 import domain.NewOrder
 import domain.Domain._
+import http.Completed._
 import errors.AppError.{ServiceException, VerboseServiceException}
-import spray.json.JsonFormat
+import spray.json.JsonWriter
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -35,28 +36,21 @@ class Routes(catalogService: CatalogService) {
           completeResult(catalogService.addOrder(order))
         }
       }
-    } ~ get {
+    } ~ post {
       path ("change_status") {
         parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
-          onComplete(catalogService.changeStatus(orderId, status)) {
-            case Success(_) => complete("OK")
-            case Failure(exception) => failWith(
-              new ServiceException("Can't update the status", exception)
-            )
-          }
+          completeResult(catalogService.changeStatus(orderId, status))
         }
       }
     }
 
-  private def completeResult[T : JsonFormat](result: Future[T]) = {
+  private def completeResult[T : JsonWriter](result: Future[T]) = {
     import http.Response._
 
     onComplete(result) {
       case Success(info) => complete(success(info))
       case Failure(exception: VerboseServiceException) => complete(fail(exception))
-      case Failure(exception) => complete(fail(
-        new ServiceException("Internal exception", exception)
-      ))
+      case Failure(exception) => complete(fail(new ServiceException("Internal exception", exception)))
     }
   }
 

@@ -3,7 +3,8 @@ package http
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import errors.AppError.ServiceException
+import errors.AppError.BreadException
+import errors.ErrorCode.ParsingError
 import spray.json.{JsString, JsValue, RootJsonFormat}
 
 import scala.util.Try
@@ -16,8 +17,8 @@ trait TimeJsonProtocol {
     def write(date: Date) = JsString(dateToIsoString(date))
     def read(json: JsValue) = json match {
       case JsString(rawDate) =>
-        parseIsoDateString(rawDate).getOrElse(throw new ServiceException(s"Expected ISO Date format, got $rawDate"))
-      case error => throw new ServiceException(s"Expected JsString, got $error")
+        parseIsoDateString(rawDate).getOrElse(throw new BreadException(ParsingError, s"Expected ISO Date format, got $rawDate"))
+      case error => throw new BreadException(ParsingError, s"Expected JsString, got $error")
     }
   }
 

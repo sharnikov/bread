@@ -7,7 +7,7 @@ trait AppError {
 
 object AppError {
 
-  class BreadException(val code: ErrorCode, val message: String, cause: Throwable)
+  class BreadException(val code: ErrorCode, val message: String, cause: Throwable = null)
     extends Exception(message, cause) with AppError
 
   class ServiceException(message: String = "", cause: Throwable = null) extends
