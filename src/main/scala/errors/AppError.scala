@@ -13,6 +13,6 @@ object AppError {
   class ServiceException(message: String = "", cause: Throwable = null) extends
     BreadException(ErrorCode.InternalError, message, cause)
 
-  class VerboseServiceError(code: ErrorCode, message: String = "", cause: Throwable = null)
+  class VerboseServiceException(code: ErrorCode, message: String = "", cause: Throwable = null)
     extends BreadException(code, message, cause)
 }

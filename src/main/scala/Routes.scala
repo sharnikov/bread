@@ -1,14 +1,10 @@
-import java.util.Date
-
-import akka.http.scaladsl.marshalling.ToResponseMarshaller
 import akka.http.scaladsl.server.Directives._
 import services.CatalogService
 import domain.OrderStatus.Status
 import domain.JsonParsers._
 import domain.NewOrder
 import domain.Domain._
-import errors.AppError.{BreadException, ServiceException}
-import errors.ErrorCode
+import errors.AppError.{ServiceException, VerboseServiceException}
 import spray.json.JsonFormat
 
 import scala.concurrent.Future
@@ -57,8 +53,9 @@ class Routes(catalogService: CatalogService) {
 
     onComplete(result) {
       case Success(info) => complete(success(info))
+      case Failure(exception: VerboseServiceException) => complete(fail(exception))
       case Failure(exception) => complete(fail(
-        new BreadException(ErrorCode.InternalError, "Internal exception", exception)
+        new ServiceException("Internal exception", exception)
       ))
     }
   }

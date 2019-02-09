@@ -5,7 +5,7 @@ import domain._
 import domain.Domain.Id
 import domain.OrderStatus.Status
 import settings.ServiceContext
-import errors.AppError.VerboseServiceError
+import errors.AppError.VerboseServiceException
 import errors.ErrorCode
 
 import scala.concurrent.Future
@@ -19,7 +19,9 @@ trait CatalogService {
 }
 
 class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
-  override def getAllGoods(): Future[List[Good]] = dao.getAllGoods()
+  override def getAllGoods(): Future[List[Good]] = {
+    dao.getAllGoods()//.map(_ => throw new VerboseServiceException(ErrorCode.DataNotFound,"Could not retrieve orderId"))
+  }
   override def getGoodsByCategory(category: String): Future[List[Good]] = dao.getGoodsByCategory(category)
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = dao.getOrderById(userId, orderId)
 
@@ -37,7 +39,7 @@ class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
     ))
 
     dao.addOrder(order, items).map(orderId => ResponseWithId(orderId.getOrElse(
-      throw new VerboseServiceError(ErrorCode.DataNotFound,"Could not retrieve orderId")
+      throw new VerboseServiceException(ErrorCode.DataNotFound,"Could not retrieve orderId")
     )))
   }
 
