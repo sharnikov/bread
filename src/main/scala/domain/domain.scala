@@ -24,19 +24,21 @@ object OrderStatus extends Enumeration {
   }
 }
 
-case class ResponseWithId(id: Id)
-
-case class Good(id: Id, name: String, category: String, price: Double) extends Embedded
-
-case class Order(id: Option[Id], userId: Id, status: Status)
-
 case class Item(goodId: Id, orderId: Option[Id], quantity: Int)
 
 case class User(id: Id, login: String, name: Option[String], secondName: Option[String])
 
+case class ResponseWithId(id: Id)
+
+case class Order(id: Option[Id], userId: Id, status: Status)
+
+
+case class Good(id: Id, name: String, category: String, price: Double) extends Embedded
+
 case class FullGoodPack(quantity: Int, good: Good) extends Embedded
 
 case class FullOrder(userId: Id, id: Id, packs: List[FullGoodPack])
+
 
 case class GoodsPack(quantity: Int, goodId: Id) extends Embedded
 

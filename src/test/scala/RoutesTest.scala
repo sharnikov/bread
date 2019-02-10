@@ -4,11 +4,11 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpecLike
 import org.scalatest.Matchers
 import services.CatalogService
-import utils.FutureUtils
+import utils.{DomainTestData, FutureUtils}
 import domain.JsonParsers._
 import http.Response._
 import http.Completed
-import DomainTestData._
+import utils.DomainTestData._
 
 class RoutesTest extends FlatSpecLike with Matchers with MockFactory with ScalatestRouteTest with FutureUtils {
 

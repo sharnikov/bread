@@ -1,3 +1,5 @@
+package utils
+
 import domain.Domain.Id
 import domain._
 
@@ -47,4 +49,24 @@ object DomainTestData {
     userId = userId,
     packs = List(goodPack, goodPack2)
   )
+
+  val order = Order(
+    id = None,
+    userId = userId,
+    status = OrderStatus.NEW
+  )
+
+  val items = List(
+    Item(
+      goodId = good.id,
+      orderId = None,
+      quantity = 2
+    ),
+    Item(
+      goodId = good2.id,
+      orderId = None,
+      quantity = 3
+    )
+  )
+
 }
