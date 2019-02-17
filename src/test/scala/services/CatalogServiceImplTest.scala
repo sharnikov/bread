@@ -1,7 +1,6 @@
 package services
 
 import database.DAO
-import domain.ResponseWithId
 import errors.AppError.VerboseServiceException
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, Matchers}

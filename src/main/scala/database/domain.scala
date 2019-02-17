@@ -1,8 +1,8 @@
 package database
 
-import domain.Domain.Id
-import domain.OrderStatus.Status
 import io.getquill.Embedded
+import services.Domain.Id
+import services.OrderStatus.Status
 
 case class Item(goodId: Id, orderId: Option[Id], quantity: Int)
 

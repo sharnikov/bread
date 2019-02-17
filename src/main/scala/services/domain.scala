@@ -1,9 +1,9 @@
-package domain
+package services
 
 import akka.http.scaladsl.unmarshalling.Unmarshaller
 import database.{Good, Item}
 import io.getquill.Embedded
-import domain.Domain.Id
+import services.Domain.Id
 
 object Domain {
   type Id = Int

@@ -1,7 +1,8 @@
-package domain
+package settings
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import database._
+import services._
 import spray.json.DefaultJsonProtocol
 
 object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport {
@@ -22,4 +23,3 @@ object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val newItem = jsonFormat2(NewItem)
 }
-

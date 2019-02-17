@@ -1,13 +1,12 @@
 package services
 
 import database.{DAO, Good, Item, Order}
-import domain._
-import domain.Domain.Id
-import domain.OrderStatus.Status
 import settings.ServiceContext
 import errors.AppError.VerboseServiceException
 import errors.ErrorCode
 import http.Completed
+import services.Domain.Id
+import services.OrderStatus.Status
 
 import scala.concurrent.Future
 

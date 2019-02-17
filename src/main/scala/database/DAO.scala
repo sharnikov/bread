@@ -1,14 +1,14 @@
 package database
 
-import domain.Domain.Id
-import domain.OrderStatus.Status
-import domain._
 import errors.AppError.{BreadException, DatabaseException}
 import errors.ErrorCode
 import http.Completed
 import settings.DBContext
 import Database.pgContext._
 import Database._
+import services.Domain.Id
+import services.{FullGoodPack, FullOrder, OrderStatus}
+import services.OrderStatus.Status
 
 import scala.concurrent.Future
 

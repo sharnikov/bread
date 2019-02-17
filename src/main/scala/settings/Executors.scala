@@ -21,4 +21,9 @@ trait ServiceContext extends Context[ExecutorService] {
   override implicit val executor = java.util.concurrent.Executors.newWorkStealingPool()
 }
 
+object MainContext extends MainContext
+
+object DBContext extends DBContext
+
+object ServiceContext extends ServiceContext
 

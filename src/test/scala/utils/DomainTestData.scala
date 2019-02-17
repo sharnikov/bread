@@ -1,8 +1,8 @@
 package utils
 
 import database.{Good, Item, Order}
-import domain.Domain.Id
-import domain._
+import services.Domain.Id
+import services._
 
 object DomainTestData {
 

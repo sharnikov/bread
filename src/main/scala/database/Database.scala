@@ -5,11 +5,11 @@ import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
 import com.github.mauricio.async.db.postgresql.pool.PostgreSQLConnectionFactory
 import com.github.mauricio.async.db.postgresql.util.URLParser
 import com.typesafe.config.{Config, ConfigFactory}
-import domain.OrderStatus.Status
-import domain.OrderStatus
 import io.getquill.context.async.{AsyncContextConfig, SqlTypes}
 import io.getquill.{Escape, PostgresAsyncContext}
 import org.postgresql.util.PGobject
+import services.OrderStatus
+import services.OrderStatus.Status
 import settings.DBContext
 
 import scala.concurrent.ExecutionContext
@@ -30,7 +30,7 @@ object Database extends DBContext {
       uriParser = URLParser
     )
 
-  val pgContext: PostgresAsyncContext[Escape] = new PostgresAsyncContext(Escape, postgresConfig.pool)
+  val pgContext: DbContext = new PostgresAsyncContext(Escape, postgresConfig.pool)
 
   import pgContext._
 

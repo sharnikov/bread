@@ -1,13 +1,12 @@
 import akka.http.scaladsl.model.StatusCodes
-import domain.{FullOrder, OrderStatus, ResponseWithId}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import database.Good
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpecLike
 import org.scalatest.Matchers
-import services.CatalogService
+import services.{CatalogService, FullOrder, OrderStatus, ResponseWithId}
 import utils.{DomainTestData, FutureUtils}
-import domain.JsonParsers._
+import settings.JsonParsers._
 import http.Completed
 import http.Response._
 import utils.DomainTestData._
@@ -34,7 +33,7 @@ class RoutesTest extends FlatSpecLike with Matchers with MockFactory with Scalat
   }
 
   "order_by_id" should "return order" in new mocks {
-    import domain.JsonParsers.fullOrder
+    import settings.JsonParsers.fullOrder
     Get(s"/order_by_id?userId=$userId&orderId=$orderId") ~> routes ~> check {
       responseAs[SuccessfulResponse[FullOrder]].payload shouldEqual DomainTestData.fullOrder
     }
@@ -47,14 +46,14 @@ class RoutesTest extends FlatSpecLike with Matchers with MockFactory with Scalat
   }
 
   "add_order" should "return id of added order" in new mocks {
-    import domain.JsonParsers.newOrder
+    import settings.JsonParsers.newOrder
     Post("/add_order", DomainTestData.newOrder) ~> routes ~> check {
       responseAs[SuccessfulResponse[ResponseWithId]].payload shouldBe ResponseWithId(orderId)
     }
   }
 
   "add_item" should "add a new item" in new mocks {
-    import domain.JsonParsers.newItem
+    import settings.JsonParsers.newItem
     Post("/add_item", DomainTestData.newItem) ~> routes ~> check {
 
       status shouldBe StatusCodes.OK
