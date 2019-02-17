@@ -2,7 +2,7 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import database.DAOImpl
+import database.{DAOImpl, DatabaseSettings, PostgresSchema}
 import services.CatalogServiceImpl
 import settings.MainContext
 import settings.config.{AppSettings, Settings}
@@ -14,7 +14,9 @@ object Starter extends App with MainContext {
   implicit val system: ActorSystem = ActorSystem("bread")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  val dao = new DAOImpl()
+  val dbSettings = new DatabaseSettings()
+  val dbSchema = new PostgresSchema(dbSettings.pgContext)
+  val dao = new DAOImpl(dbSchema)
 
   val catalogService = new CatalogServiceImpl(dao)
 

@@ -3,9 +3,7 @@ package database
 import errors.AppError.{BreadException, DatabaseException}
 import errors.ErrorCode
 import http.Completed
-import settings.DBContext
-import Database.pgContext._
-import Database._
+import settings.DatabaseContext
 import services.Domain.Id
 import services.{FullGoodPack, FullOrder, OrderStatus}
 import services.OrderStatus.Status
@@ -21,22 +19,25 @@ trait DAO {
   def addItemToOrder(item: Item, userId: Id): Future[Completed]
 }
 
-class DAOImpl extends DAO with DBContext {
+class DAOImpl(schema: PostgresSchema) extends DAO with DatabaseContext {
+
+  import schema._
+  import schema.dbContext._
 
   override def getAllGoods(): Future[List[Good]] = {
-    run(goods)
+    run(schema.goods)
   }
 
   override def getGoodsByCategory(category: String): Future[List[Good]] = {
-    run(goods.filter(_.category != lift(category)))
+    run(schema.goods.filter(_.category != lift(category)))
   }
 
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = {
     run(
-      Database.orders.filter(_.userId == lift(userId))
-        .join(items).on((order, item) => order.id.exists(item.orderId.contains) && order.id.contains(lift(orderId)))
+      schema.orders.filter(_.userId == lift(userId))
+        .join(schema.items).on((order, item) => order.id.exists(item.orderId.contains) && order.id.contains(lift(orderId)))
         .map { case (_, item) => item }
-        .join(goods).on((item, good) => item.goodId == good.id)
+        .join(schema.goods).on((item, good) => item.goodId == good.id)
         .map { case (item, good) => FullGoodPack(item.quantity, good) }
     ).map { goodsWithQuantity =>
       FullOrder(
@@ -53,34 +54,34 @@ class DAOImpl extends DAO with DBContext {
 
     transaction { _ =>
       for {
-        orderId <- run(orders.insert(lift(order)).returning(_.id))
-        _ <- run(liftQuery(addIdToItems(orderId)).foreach(item => Database.items.insert(item)))
+        orderId <- run(schema.orders.insert(lift(order)).returning(_.id))
+        _ <- run(liftQuery(addIdToItems(orderId)).foreach(item => schema.items.insert(item)))
       } yield orderId
     }
   }
 
   override def changeStatus(orderId: Id, status: Status): Future[Completed] = {
-    transaction( _ => run(orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed))
+    transaction( _ => run(schema.orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed))
   }
 
   override def addItemToOrder(newItem: Item, userId: Id): Future[Completed] = {
     transaction { _ =>
       for {
-        orders <- run(orders.filter(order =>
+        orders <- run(schema.orders.filter(order =>
           lift(newItem).orderId.exists(order.id.contains) && lift(userId) == order.userId)
         )
         order = orders.headOption
         _ = if (order.isEmpty) throw new DatabaseException(s"There is no such an order")
         _ = if (order.exists(_.status != OrderStatus.NEW))
           throw new BreadException(ErrorCode.DataNotFound, s"Order status is ${orders.headOption.map(_.status)}, but must be NEW")
-        currentItems <- run(items.filter { item =>
+        currentItems <- run(schema.items.filter { item =>
           val liftedNewItem = lift(newItem)
           item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
         })
         _ <- if (currentItems.nonEmpty) {
           val currentItem = currentItems.head
-          run(items.update(_.quantity -> lift(currentItem.quantity + newItem.quantity)))
-        } else run(items.insert(lift(newItem)))
+          run(schema.items.update(_.quantity -> lift(currentItem.quantity + newItem.quantity)))
+        } else run(schema.items.insert(lift(newItem)))
       } yield Completed
     }
   }

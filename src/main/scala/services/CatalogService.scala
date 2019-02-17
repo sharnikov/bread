@@ -20,9 +20,7 @@ trait CatalogService {
 }
 
 class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
-  override def getAllGoods(): Future[List[Good]] = {
-    dao.getAllGoods()//.map(_ => throw new VerboseServiceException(ErrorCode.DataNotFound,"Could not retrieve orderId"))
-  }
+  override def getAllGoods(): Future[List[Good]] = dao.getAllGoods()
   override def getGoodsByCategory(category: String): Future[List[Good]] = dao.getGoodsByCategory(category)
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = dao.getOrderById(userId, orderId)
 
