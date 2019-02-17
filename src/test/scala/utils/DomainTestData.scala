@@ -56,17 +56,22 @@ object DomainTestData {
     status = OrderStatus.NEW
   )
 
-  val items = List(
-    Item(
-      goodId = good.id,
-      orderId = None,
-      quantity = 2
-    ),
-    Item(
-      goodId = good2.id,
-      orderId = None,
-      quantity = 3
-    )
+  val item = Item(
+    goodId = good.id,
+    orderId = None,
+    quantity = 2
   )
+
+  val item2 = Item(
+    goodId = good2.id,
+    orderId = None,
+    quantity = 3
+  )
+
+  val items = List(item, item2)
+
+  val itemWithId = item.copy(orderId = Some(orderId))
+
+  val newItem = NewItem(userId, itemWithId)
 
 }

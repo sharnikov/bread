@@ -13,6 +13,9 @@ object AppError {
   class ServiceException(message: String = "", cause: Throwable = null) extends
     BreadException(ErrorCode.InternalError, message, cause)
 
+  class DatabaseException(message: String = "", cause: Throwable = null)
+    extends BreadException(ErrorCode.DataNotFound, message, cause)
+
   class VerboseServiceException(code: ErrorCode, message: String = "", cause: Throwable = null)
     extends BreadException(code, message, cause)
 }

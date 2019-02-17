@@ -17,6 +17,7 @@ trait CatalogService {
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
   def addOrder(order: NewOrder): Future[ResponseWithId]
   def changeStatus(orderId: Id, status: Status): Future[Completed]
+  def addItemToOrder(newItem: NewItem): Future[Completed]
 }
 
 class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
@@ -45,4 +46,6 @@ class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
   }
 
   override def changeStatus(orderId: Id, status: Status): Future[Completed] = dao.changeStatus(orderId, status)
+
+  override def addItemToOrder(newItem: NewItem): Future[Completed] = dao.addItemToOrder(newItem.item, newItem.userId)
 }

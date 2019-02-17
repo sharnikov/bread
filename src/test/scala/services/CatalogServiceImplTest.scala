@@ -11,7 +11,6 @@ import utils.FutureUtils
 class CatalogServiceImplTest extends FlatSpecLike with Matchers with MockFactory with FutureUtils {
 
   trait mocks {
-
     val dao = stub[DAO]
     val catalogService = new CatalogServiceImpl(dao)
   }

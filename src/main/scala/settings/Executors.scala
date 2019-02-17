@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService
 import scala.concurrent.ExecutionContext
 
 trait Context[+E <: ExecutorService] {
-  implicit val executor: E
+  val executor: E
   implicit val context = ExecutionContext.fromExecutor(executor)
 }
 

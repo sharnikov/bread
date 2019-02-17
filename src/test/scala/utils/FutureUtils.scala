@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import org.scalatest.Matchers.fail
 import org.scalatest.exceptions.TestFailedException
 
-import scala.concurrent.duration.{Duration, FiniteDuration, TimeUnit}
+import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{Await, Future}
 import scala.reflect.ClassTag
 import scala.util.control.NonFatal
@@ -36,7 +36,7 @@ trait FutureUtils {
   private def awaitReady[T](future: => Future[T]): Future[T] = {
     try {
       val f = future
-      Await.ready(f, Duration.Inf)
+      Await.ready(f, FiniteDuration.apply(5, TimeUnit.SECONDS))
       f
     } catch {
       case NonFatal(e) => throw new TestFailedException(

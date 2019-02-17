@@ -2,7 +2,7 @@ import akka.http.scaladsl.server.Directives._
 import services.CatalogService
 import domain.OrderStatus.Status
 import domain.JsonParsers._
-import domain.NewOrder
+import domain.{Item, NewItem, NewOrder}
 import domain.Domain._
 import http.Completed._
 import errors.AppError.{ServiceException, VerboseServiceException}
@@ -40,6 +40,12 @@ class Routes(catalogService: CatalogService) {
       path ("change_status") {
         parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
           completeResult(catalogService.changeStatus(orderId, status))
+        }
+      }
+    } ~ post {
+      path ("add_item") {
+        entity(as[NewItem]) { newItem =>
+          completeResult(catalogService.addItemToOrder(newItem))
         }
       }
     }

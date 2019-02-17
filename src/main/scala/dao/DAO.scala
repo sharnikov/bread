@@ -3,6 +3,8 @@ package dao
 import domain.Domain.Id
 import domain.OrderStatus.Status
 import domain._
+import errors.AppError.{BreadException, DatabaseException}
+import errors.ErrorCode
 import http.Completed
 import settings.{DBContext, Database}
 import settings.Database.pgContext._
@@ -16,6 +18,7 @@ trait DAO {
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
   def addOrder(order: Order, items: List[Item]): Future[Option[Id]]
   def changeStatus(orderId: Id, status: Status): Future[Completed]
+  def addItemToOrder(item: Item, userId: Id): Future[Completed]
 }
 
 class DAOImpl extends DAO with DBContext {
@@ -48,7 +51,7 @@ class DAOImpl extends DAO with DBContext {
 
     def addIdToItems(orderId: Option[Id]) = items.map(_.copy(orderId = orderId))
 
-    transaction { ec =>
+    transaction { _ =>
       for {
         orderId <- run(orders.insert(lift(order)).returning(_.id))
         _ <- run(liftQuery(addIdToItems(orderId)).foreach(item => Database.items.insert(item)))
@@ -57,7 +60,29 @@ class DAOImpl extends DAO with DBContext {
   }
 
   override def changeStatus(orderId: Id, status: Status): Future[Completed] = {
-    run(orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed)
+    transaction( _ => run(orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed))
+  }
+
+  override def addItemToOrder(newItem: Item, userId: Id): Future[Completed] = {
+    transaction { _ =>
+      for {
+        orders <- run(orders.filter(order =>
+          lift(newItem).orderId.exists(order.id.contains) && lift(userId) == order.userId)
+        )
+        order = orders.headOption
+        _ = if (order.isEmpty) throw new DatabaseException(s"There is no such an order")
+        _ = if (order.exists(_.status != OrderStatus.NEW))
+          throw new BreadException(ErrorCode.DataNotFound, s"Order status is ${orders.headOption.map(_.status)}, but must be NEW")
+        currentItems <- run(items.filter { item =>
+          val liftedNewItem = lift(newItem)
+          item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
+        })
+        _ <- if (currentItems.nonEmpty) {
+          val currentItem = currentItems.head
+          run(items.update(_.quantity -> lift(currentItem.quantity + newItem.quantity)))
+        } else run(items.insert(lift(newItem)))
+      } yield Completed
+    }
   }
 }
 

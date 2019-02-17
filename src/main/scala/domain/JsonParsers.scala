@@ -16,5 +16,9 @@ object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val goodsPack = jsonFormat2(GoodsPack)
 
   implicit val newOrder = jsonFormat2(NewOrder)
+
+  implicit val item = jsonFormat3(Item)
+
+  implicit val newItem = jsonFormat2(NewItem)
 }
 
