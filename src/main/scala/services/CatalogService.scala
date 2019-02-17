@@ -1,6 +1,6 @@
 package services
 
-import dao.DAO
+import database.{DAO, Good, Item, Order}
 import domain._
 import domain.Domain.Id
 import domain.OrderStatus.Status

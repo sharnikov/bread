@@ -1,6 +1,6 @@
 package services
 
-import dao.DAO
+import database.DAO
 import domain.ResponseWithId
 import errors.AppError.VerboseServiceException
 import org.scalamock.scalatest.MockFactory

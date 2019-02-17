@@ -1,6 +1,7 @@
 import akka.http.scaladsl.model.StatusCodes
-import domain.{FullOrder, Good, OrderStatus, ResponseWithId}
+import domain.{FullOrder, OrderStatus, ResponseWithId}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import database.Good
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpecLike
 import org.scalatest.Matchers

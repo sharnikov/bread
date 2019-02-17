@@ -1,4 +1,4 @@
-package dao
+package database
 
 import domain.Domain.Id
 import domain.OrderStatus.Status
@@ -6,9 +6,9 @@ import domain._
 import errors.AppError.{BreadException, DatabaseException}
 import errors.ErrorCode
 import http.Completed
-import settings.{DBContext, Database}
-import settings.Database.pgContext._
-import settings.Database._
+import settings.DBContext
+import Database.pgContext._
+import Database._
 
 import scala.concurrent.Future
 

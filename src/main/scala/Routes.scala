@@ -2,7 +2,7 @@ import akka.http.scaladsl.server.Directives._
 import services.CatalogService
 import domain.OrderStatus.Status
 import domain.JsonParsers._
-import domain.{Item, NewItem, NewOrder}
+import domain.{NewItem, NewOrder}
 import domain.Domain._
 import http.Completed._
 import errors.AppError.{ServiceException, VerboseServiceException}

@@ -1,6 +1,7 @@
 package domain
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+import database._
 import spray.json.DefaultJsonProtocol
 
 object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport {

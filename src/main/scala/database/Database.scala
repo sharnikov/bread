@@ -1,4 +1,4 @@
-package settings
+package database
 
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
@@ -6,10 +6,11 @@ import com.github.mauricio.async.db.postgresql.pool.PostgreSQLConnectionFactory
 import com.github.mauricio.async.db.postgresql.util.URLParser
 import com.typesafe.config.{Config, ConfigFactory}
 import domain.OrderStatus.Status
+import domain.OrderStatus
 import io.getquill.context.async.{AsyncContextConfig, SqlTypes}
 import io.getquill.{Escape, PostgresAsyncContext}
 import org.postgresql.util.PGobject
-import domain._
+import settings.DBContext
 
 import scala.concurrent.ExecutionContext
 
@@ -65,5 +66,3 @@ object Database extends DBContext {
   }
 
 }
-
-

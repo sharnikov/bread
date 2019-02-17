@@ -1,5 +1,6 @@
 package utils
 
+import database.{Good, Item, Order}
 import domain.Domain.Id
 import domain._
 
