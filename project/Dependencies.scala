@@ -2,10 +2,15 @@ import sbt.librarymanagement._
 
 object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
 
-  private val typesafeAkkaVersion = "10.1.7"
+  private val akkaVersion = "10.1.7"
   private val jacksonVersion = "2.9.6"
   private val quillVersion = "2.6.0"
-  private val streamsVersion = "2.5.19"
+  private val akkaStreamsVersion = "2.5.19"
+
+  val logs = Seq(
+    "ch.qos.logback" % "logback-classic" % "1.2.3",
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
+  )
 
   val typesafeConfig = Seq(
     "com.typesafe" % "config" % "1.3.2",
@@ -17,13 +22,14 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
   )
 
   val akka = Seq(
-    "com.typesafe.akka" %% "akka-http" % typesafeAkkaVersion,
-    "com.typesafe.akka" %% "akka-http-xml" % typesafeAkkaVersion,
-    "com.typesafe.akka" %% "akka-http-spray-json" % typesafeAkkaVersion,
+    "com.typesafe.akka" %% "akka-http" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http-xml" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http-spray-json" % akkaVersion,
     "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M3" exclude("com.typesafe.akka", "akka-actor"),
-    "com.typesafe.akka" %% "akka-stream" % streamsVersion,
-    "com.typesafe.akka" %% "akka-testkit" % streamsVersion % Test,
-    "com.typesafe.akka" %% "akka-http-testkit" % typesafeAkkaVersion % Test
+    "com.typesafe.akka" %% "akka-stream" % akkaStreamsVersion,
+    "com.typesafe.akka" %% "akka-slf4j" % akkaStreamsVersion,
+    "com.typesafe.akka" %% "akka-testkit" % akkaStreamsVersion % Test,
+    "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % Test
   )
 
   val json = Seq(
@@ -45,5 +51,5 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
     "org.scalamock" %% "scalamock" % "4.1.0" % Test
   )
 
-  val all = typesafeConfig ++ utilLibraries ++ testing ++ database ++ json ++ akka
+  val all = typesafeConfig ++ utilLibraries ++ testing ++ database ++ json ++ akka ++ logs
 }

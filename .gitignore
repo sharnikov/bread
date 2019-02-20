@@ -19,3 +19,5 @@
 *.iws
 .idea
 out
+
+!logback.xml
