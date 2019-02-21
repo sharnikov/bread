@@ -1,19 +1,33 @@
+import akka.http.scaladsl.server.ExceptionHandler
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
 import services.{CatalogService, NewItem, NewOrder}
 import settings.JsonParsers._
 import http.Completed._
+import http.Response._
 import errors.AppError.{ServiceException, VerboseServiceException}
+import http.Response.fail
 import services.Domain.Id
 import services.OrderStatus.Status
+import settings.MainContext
 import spray.json.JsonWriter
 
 import scala.concurrent.Future
-import scala.util.{Failure, Success}
+import scala.util.Success
 
-class Routes(catalogService: CatalogService) extends LazyLogging {
+class Routes(catalogService: CatalogService) extends LazyLogging with MainContext {
 
-  def getRoutes() =
+  implicit private def exceptionHandler = ExceptionHandler {
+    case exception: VerboseServiceException =>
+      logger.info("Failed with a verboseException", exception)
+      complete(fail(exception))
+    case exception =>
+      logger.info("Failed with an exception", exception)
+      complete(fail(new ServiceException("Internal exception", exception)))
+  }
+
+  def getRoutes() = Route.seal(
     get {
       path("all_goods") {
         completeResult(catalogService.getAllGoods())
@@ -49,21 +63,14 @@ class Routes(catalogService: CatalogService) extends LazyLogging {
         }
       }
     }
+  )
 
   private def completeResult[T : JsonWriter](result: Future[T]) = {
     import http.Response._
-
     onComplete(result) {
       case Success(info) =>
         logger.info("Successful result = {}", info)
         complete(success(info))
-      case Failure(exception: VerboseServiceException) =>
-        logger.info("Failed with a verboseException", exception)
-        complete(fail(exception))
-      case Failure(exception) =>
-        logger.info("Failed with an exception", exception)
-        complete(fail(new ServiceException("Internal exception", exception)))
     }
   }
-
 }
