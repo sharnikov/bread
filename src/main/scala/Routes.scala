@@ -1,4 +1,5 @@
 import akka.http.scaladsl.server.Directives._
+import com.typesafe.scalalogging.LazyLogging
 import services.{CatalogService, NewItem, NewOrder}
 import settings.JsonParsers._
 import http.Completed._
@@ -10,7 +11,7 @@ import spray.json.JsonWriter
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-class Routes(catalogService: CatalogService) {
+class Routes(catalogService: CatalogService) extends LazyLogging {
 
   def getRoutes() =
     get {
@@ -53,11 +54,16 @@ class Routes(catalogService: CatalogService) {
     import http.Response._
 
     onComplete(result) {
-      case Success(info) => complete(success(info))
-      case Failure(exception: VerboseServiceException) => complete(fail(exception))
-      case Failure(exception) => complete(fail(new ServiceException("Internal exception", exception)))
+      case Success(info) =>
+        logger.info("Successful result = {}", info)
+        complete(success(info))
+      case Failure(exception: VerboseServiceException) =>
+        logger.info("Failed with a verboseException", exception)
+        complete(fail(exception))
+      case Failure(exception) =>
+        logger.info("Failed with an exception", exception)
+        complete(fail(new ServiceException("Internal exception", exception)))
     }
   }
-
 
 }
