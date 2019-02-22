@@ -63,4 +63,14 @@ select g.name, i.quantity from GOODS as g JOIN ITEMS as i on i.good_id = g.id jo
 create type order_status AS ENUM ('NEW', 'DONE', 'IN_PROGRESS', 'REJECTED');
 alter table ORDERS add column status order_status not null default 'NEW';
 
+--------------------------------------------
+alter table USERS add column password varchar(100) not null default '';
+update USERS set password = 'qwerty' where id = 1;
+ALTER TABLE USERS ALTER COLUMN password DROP DEFAULT;
+----------------------------------
+
+create type roles AS ENUM ('ADMIN', 'CLIENT', 'GOD', 'TRUSTED_CLIENT');
+alter table USERS add column role roles not null default 'CLIENT';
+update USERS set role = 'ADMIN' where id = 1;
+
 -----------------------------------

@@ -2,6 +2,7 @@ import akka.http.scaladsl.server.ExceptionHandler
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
+import database.OrderStatus.Status
 import services.{CatalogService, NewItem, NewOrder}
 import settings.JsonParsers._
 import http.Completed._
@@ -9,7 +10,6 @@ import http.Response._
 import errors.AppError.{ServiceException, VerboseServiceException}
 import http.Response.fail
 import services.Domain.Id
-import services.OrderStatus.Status
 import settings.MainContext
 import spray.json.JsonWriter
 

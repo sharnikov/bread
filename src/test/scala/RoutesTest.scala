@@ -1,10 +1,10 @@
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import database.Good
+import database.{Good, OrderStatus}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpecLike
 import org.scalatest.Matchers
-import services.{CatalogService, FullOrder, OrderStatus, ResponseWithId}
+import services.{CatalogService, FullOrder, ResponseWithId}
 import utils.{DomainTestData, FutureUtils}
 import settings.JsonParsers._
 import http.Completed

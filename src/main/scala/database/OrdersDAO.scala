@@ -1,16 +1,16 @@
 package database
 
+import database.OrderStatus.Status
 import errors.AppError.{BreadException, DatabaseException}
 import errors.ErrorCode
 import http.Completed
 import settings.DatabaseContext
 import services.Domain.Id
-import services.{FullGoodPack, FullOrder, OrderStatus}
-import services.OrderStatus.Status
+import services.{FullGoodPack, FullOrder}
 
 import scala.concurrent.Future
 
-trait DAO {
+trait OrdersDAO {
   def getAllGoods(): Future[List[Good]]
   def getGoodsByCategory(category: String): Future[List[Good]]
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
@@ -19,7 +19,7 @@ trait DAO {
   def addItemToOrder(item: Item, userId: Id): Future[Completed]
 }
 
-class DAOImpl(schema: PostgresSchema) extends DAO with DatabaseContext {
+class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseContext {
 
   import schema._
   import schema.dbContext._

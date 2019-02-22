@@ -1,6 +1,6 @@
 package services
 
-import database.DAO
+import database.OrdersDAO
 import errors.AppError.VerboseServiceException
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, Matchers}
@@ -10,7 +10,7 @@ import utils.FutureUtils
 class CatalogServiceImplTest extends FlatSpecLike with Matchers with MockFactory with FutureUtils {
 
   trait mocks {
-    val dao = stub[DAO]
+    val dao = stub[OrdersDAO]
     val catalogService = new CatalogServiceImpl(dao)
   }
 

@@ -1,12 +1,12 @@
 package services
 
-import database.{DAO, Good, Item, Order}
+import database.OrderStatus.Status
+import database._
 import settings.ServiceContext
 import errors.AppError.VerboseServiceException
 import errors.ErrorCode
 import http.Completed
 import services.Domain.Id
-import services.OrderStatus.Status
 
 import scala.concurrent.Future
 
@@ -19,7 +19,7 @@ trait CatalogService {
   def addItemToOrder(newItem: NewItem): Future[Completed]
 }
 
-class CatalogServiceImpl(dao: DAO) extends CatalogService with ServiceContext {
+class CatalogServiceImpl(dao: OrdersDAO) extends CatalogService with ServiceContext {
   override def getAllGoods(): Future[List[Good]] = dao.getAllGoods()
   override def getGoodsByCategory(category: String): Future[List[Good]] = dao.getGoodsByCategory(category)
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = dao.getOrderById(userId, orderId)

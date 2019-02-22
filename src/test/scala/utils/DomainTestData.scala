@@ -1,6 +1,6 @@
 package utils
 
-import database.{Good, Item, Order}
+import database.{Good, Item, Order, OrderStatus}
 import services.Domain.Id
 import services._
 

@@ -1,33 +1,38 @@
 package database
 
+import database.OrderStatus.Status
+import database.Role.Role
 import io.getquill.{Escape, PostgresAsyncContext}
 import io.getquill.context.async.SqlTypes
 import org.postgresql.util.PGobject
-import services.OrderStatus
-import services.OrderStatus.Status
 
 class PostgresSchema(val dbContext: PostgresAsyncContext[Escape]) {
 
   import dbContext._
 
-  implicit val statusDecoder: Decoder[Status] =
-    decoder(
-      {
-        case value =>  OrderStatus.withNameWithDefault(value.toString)
-      },
-      SqlTypes.VARCHAR
-    )
+  private def makeDecoder[T <: PostgreEnum](enum: T): Decoder[enum.Value] = decoder(
+    {
+      case value =>  enum.withNameWithDefault(value.toString)
+    },
+    SqlTypes.VARCHAR
+  )
 
-  implicit val statusEncoder: Encoder[Status] =
-    encoder(
-      value => {
-        val pgObject = new PGobject()
-        pgObject.setType("TEXT")
-        pgObject.setValue(value.toString)
-        pgObject
-      },
-      SqlTypes.VARCHAR
-    )
+  private def makeEncoder[T <: PostgreEnum](enum: T): Encoder[enum.Value] = encoder(
+    value => {
+      val pgObject = new PGobject()
+      pgObject.setType("TEXT")
+      pgObject.setValue(value.toString)
+      pgObject
+    },
+    SqlTypes.VARCHAR
+  )
+
+  implicit val statusDecoder: Decoder[Status] = makeDecoder(OrderStatus)
+  implicit val statusEncoder: Encoder[Status] = makeEncoder(OrderStatus)
+
+  implicit val roleDecoder: Decoder[Role] = makeDecoder(Role)
+  implicit val roleEncoder: Encoder[Role] = makeEncoder(Role)
+
 
   val goods = quote {
     querySchema[Good]("goods")
@@ -39,5 +44,16 @@ class PostgresSchema(val dbContext: PostgresAsyncContext[Escape]) {
 
   val orders = quote {
     querySchema[Order]("orders", _.id -> "id", _.userId -> "user_id", _.status -> "status")
+  }
+
+  val users = quote {
+    querySchema[User]("users",
+      _.id -> "id",
+      _.login -> "login",
+      _.name -> "name",
+      _.secondName -> "secondname",
+      _.password -> "password",
+      _.role -> "role"
+    )
   }
 }
