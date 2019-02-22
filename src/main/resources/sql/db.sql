@@ -18,7 +18,7 @@ select * from GOODS;
 CREATE TABLE USERS
 (
   id serial PRIMARY KEY,
-  login text not null,
+  login text not null unique,
   name text,
   secondname text
 );
