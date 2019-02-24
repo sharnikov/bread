@@ -1,9 +1,12 @@
+import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
+
 import akka.http.scaladsl.server.ExceptionHandler
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
 import database.OrderStatus.Status
-import services.{CatalogService, NewItem, NewOrder}
+import services.{AuthorizationService, CatalogService, NewItem, NewOrder}
 import settings.JsonParsers._
 import http.Completed._
 import http.Response._
@@ -16,7 +19,8 @@ import spray.json.JsonWriter
 import scala.concurrent.Future
 import scala.util.Success
 
-class Routes(catalogService: CatalogService) extends LazyLogging with MainContext {
+class Routes(catalogService: CatalogService, authorizationService: AuthorizationService, sessions: ConcurrentHashMap[String, Date])
+  extends LazyLogging with MainContext {
 
   implicit private def exceptionHandler = ExceptionHandler {
     case exception: VerboseServiceException =>
@@ -30,6 +34,7 @@ class Routes(catalogService: CatalogService) extends LazyLogging with MainContex
   def getRoutes() = Route.seal(
     get {
       path("all_goods") {
+        logger.warn(sessions.toString)
         completeResult(catalogService.getAllGoods())
       }
     } ~ get {
@@ -60,6 +65,12 @@ class Routes(catalogService: CatalogService) extends LazyLogging with MainContex
       path ("add_item") {
         entity(as[NewItem]) { newItem =>
           completeResult(catalogService.addItemToOrder(newItem))
+        }
+      }
+    } ~ post {
+      path("login") {
+        parameters('login.as[String], 'password.as[String]) { (login, password) =>
+          completeResult(authorizationService.login(login, password))
         }
       }
     }

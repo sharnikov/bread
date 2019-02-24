@@ -1,10 +1,13 @@
+import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
+
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import database.{Good, OrderStatus}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpecLike
 import org.scalatest.Matchers
-import services.{CatalogService, FullOrder, ResponseWithId}
+import services.{AuthorizationService, CatalogService, FullOrder, ResponseWithId}
 import utils.{DomainTestData, FutureUtils}
 import settings.JsonParsers._
 import http.Completed
@@ -16,7 +19,8 @@ class RoutesTest extends FlatSpecLike with Matchers with MockFactory with Scalat
   trait mocks {
 
     val catalogService = stub[CatalogService]
-    val routes = new Routes(catalogService).getRoutes()
+    val authorizationService = stub[AuthorizationService]
+    val routes = new Routes(catalogService, authorizationService, new ConcurrentHashMap[String, Date]()).getRoutes()
 
     (catalogService.getAllGoods _).when().returns(goodsList)
     (catalogService.getOrderById _).when(userId, orderId).returns(DomainTestData.fullOrder)

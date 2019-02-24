@@ -1,6 +1,5 @@
 package services
 
-import akka.http.scaladsl.unmarshalling.Unmarshaller
 import database.{Good, Item}
 import io.getquill.Embedded
 import services.Domain.Id

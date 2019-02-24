@@ -1,6 +1,6 @@
 package settings
 
-import java.util.concurrent.ExecutorService
+import java.util.concurrent.{ExecutorService, ScheduledExecutorService}
 
 import scala.concurrent.ExecutionContext
 
@@ -26,4 +26,3 @@ object MainContext extends MainContext
 object DatabaseContext extends DatabaseContext
 
 object ServiceContext extends ServiceContext
-
