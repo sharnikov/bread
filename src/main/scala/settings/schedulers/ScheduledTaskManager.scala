@@ -1,4 +1,4 @@
-package settings
+package settings.schedulers
 
 import java.util.Date
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
@@ -10,7 +10,7 @@ trait ScheduledTaskManager {
   def start(): Unit
 }
 
-class SimpleScheduledTaskManager(settings: Settings, sessions: ConcurrentHashMap[String, Date])
+class SimpleScheduledTaskManager(sessions: ConcurrentHashMap[String, Date], settings: Settings)
   extends ScheduledTaskManager with LazyLogging {
 
   private val scheduledExecutor = java.util.concurrent.Executors.newScheduledThreadPool(

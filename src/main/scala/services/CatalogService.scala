@@ -2,11 +2,11 @@ package services
 
 import database.OrderStatus.Status
 import database._
-import settings.ServiceContext
 import errors.AppError.VerboseServiceException
 import errors.ErrorCode
 import http.Completed
 import services.Domain.Id
+import settings.schedulers.ServiceContext
 
 import scala.concurrent.Future
 

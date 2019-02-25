@@ -7,7 +7,7 @@ import com.github.mauricio.async.db.postgresql.util.URLParser
 import com.typesafe.config.{Config, ConfigFactory}
 import io.getquill.context.async.AsyncContextConfig
 import io.getquill.{Escape, PostgresAsyncContext}
-import settings.DatabaseContext
+import settings.schedulers.DatabaseContext
 
 import scala.concurrent.ExecutionContext
 

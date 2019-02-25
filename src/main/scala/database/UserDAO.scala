@@ -1,6 +1,6 @@
 package database
 
-import settings.DatabaseContext
+import settings.schedulers.DatabaseContext
 
 import scala.concurrent.Future
 

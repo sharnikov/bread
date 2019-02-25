@@ -1,6 +1,6 @@
-package settings
+package settings.schedulers
 
-import java.util.concurrent.{ExecutorService, ScheduledExecutorService}
+import java.util.concurrent.ExecutorService
 
 import scala.concurrent.ExecutionContext
 

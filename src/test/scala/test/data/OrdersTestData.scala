@@ -1,10 +1,10 @@
-package utils
+package test.data
 
 import database.{Good, Item, Order, OrderStatus}
 import services.Domain.Id
 import services._
 
-object DomainTestData {
+object OrdersTestData {
 
   val category = "cat"
 

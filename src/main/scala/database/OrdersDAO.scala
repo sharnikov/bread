@@ -4,9 +4,9 @@ import database.OrderStatus.Status
 import errors.AppError.{BreadException, DatabaseException}
 import errors.ErrorCode
 import http.Completed
-import settings.DatabaseContext
 import services.Domain.Id
 import services.{FullGoodPack, FullOrder}
+import settings.schedulers.DatabaseContext
 
 import scala.concurrent.Future
 

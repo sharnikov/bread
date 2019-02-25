@@ -7,20 +7,22 @@ import com.typesafe.scalalogging.LazyLogging
 import database.UserDAO
 import errors.AppError.VerboseServiceException
 import errors.ErrorCode.DataNotFound
-import settings.ServiceContext
+import settings.config.Settings
+import settings.schedulers.ServiceContext
 
 import scala.concurrent.Future
+import scala.util.Random
 
 trait AuthorizationService {
-  def login(login: String, password: String): Future[String]
+  def login(login: String, password: String): Future[SessionId]
 }
 
-class SimpleAuthorizationService(userDAO: UserDAO, sessions: ConcurrentHashMap[String, Date])
+class SimpleAuthorizationService(userDAO: UserDAO, sessions: ConcurrentHashMap[String, Date], settings: Settings)
   extends AuthorizationService with ServiceContext with LazyLogging {
 
-  override def login(login: String, password: String): Future[String] = {
+  override def login(login: String, password: String): Future[SessionId] = {
     userDAO.getUser(login, password).map { userOpt =>
-      userOpt.map(_ => updateSession()).getOrElse {
+      userOpt.map(_ => SessionId(updateSession())).getOrElse {
         logger.error(s"User with login $login wasn't found")
         throw new VerboseServiceException(DataNotFound, "Wrong login or password")
       }
@@ -38,7 +40,7 @@ class SimpleAuthorizationService(userDAO: UserDAO, sessions: ConcurrentHashMap[S
       updateSession(currentId)
       currentId
     }.getOrElse {
-      val sessionId = scala.util.Random.alphanumeric.take(30).mkString
+      val sessionId = Random.alphanumeric.take(settings.sessionSettings().size()).mkString
       updateSession(sessionId)
       sessionId
     }

@@ -4,7 +4,7 @@ import database.OrdersDAO
 import errors.AppError.VerboseServiceException
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, Matchers}
-import utils.DomainTestData._
+import test.data.OrdersTestData._
 import utils.FutureUtils
 
 class CatalogServiceImplTest extends FlatSpecLike with Matchers with MockFactory with FutureUtils {

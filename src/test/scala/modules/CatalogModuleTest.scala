@@ -1,33 +1,32 @@
+package modules
+
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
+import test.data.OrdersTestData.{category, goodsList, orderId, userId}
+import utils.TestStuff
 import akka.http.scaladsl.model.StatusCodes
-import akka.http.scaladsl.testkit.ScalatestRouteTest
-import database.{Good, OrderStatus}
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.FlatSpecLike
-import org.scalatest.Matchers
-import services.{AuthorizationService, CatalogService, FullOrder, ResponseWithId}
-import utils.{DomainTestData, FutureUtils}
+import database.{Good, OrderStatus, OrdersDAO}
+import services.{CatalogService, FullOrder, ResponseWithId}
 import settings.JsonParsers._
 import http.Completed
 import http.Response._
-import utils.DomainTestData._
+import test.data.OrdersTestData
 
-class RoutesTest extends FlatSpecLike with Matchers with MockFactory with ScalatestRouteTest with FutureUtils {
+class CatalogModuleTest extends TestStuff {
 
   trait mocks {
-
+    val ordersDao = stub[OrdersDAO]
+    val module = new CatalogModule(ordersDao, new ConcurrentHashMap[String, Date]())
     val catalogService = stub[CatalogService]
-    val authorizationService = stub[AuthorizationService]
-    val routes = new Routes(catalogService, authorizationService, new ConcurrentHashMap[String, Date]()).getRoutes()
+    val routes = module.routes(catalogService)
 
     (catalogService.getAllGoods _).when().returns(goodsList)
-    (catalogService.getOrderById _).when(userId, orderId).returns(DomainTestData.fullOrder)
+    (catalogService.getOrderById _).when(userId, orderId).returns(OrdersTestData.fullOrder)
     (catalogService.getGoodsByCategory _).when(category).returns(goodsList)
-    (catalogService.addOrder _).when(DomainTestData.newOrder).returns(ResponseWithId(orderId))
+    (catalogService.addOrder _).when(OrdersTestData.newOrder).returns(ResponseWithId(orderId))
     (catalogService.changeStatus _).when(orderId, OrderStatus.REJECTED).returns(Completed)
-    (catalogService.addItemToOrder _).when(DomainTestData.newItem).returns(Completed)
+    (catalogService.addItemToOrder _).when(OrdersTestData.newItem).returns(Completed)
   }
 
   "all_goods" should "return goods" in new mocks {
@@ -37,9 +36,8 @@ class RoutesTest extends FlatSpecLike with Matchers with MockFactory with Scalat
   }
 
   "order_by_id" should "return order" in new mocks {
-    import settings.JsonParsers.fullOrder
     Get(s"/order_by_id?userId=$userId&orderId=$orderId") ~> routes ~> check {
-      responseAs[SuccessfulResponse[FullOrder]].payload shouldEqual DomainTestData.fullOrder
+      responseAs[SuccessfulResponse[FullOrder]].payload shouldEqual OrdersTestData.fullOrder
     }
   }
 
@@ -50,15 +48,13 @@ class RoutesTest extends FlatSpecLike with Matchers with MockFactory with Scalat
   }
 
   "add_order" should "return id of added order" in new mocks {
-    import settings.JsonParsers.newOrder
-    Post("/add_order", DomainTestData.newOrder) ~> routes ~> check {
+    Post("/add_order", OrdersTestData.newOrder) ~> routes ~> check {
       responseAs[SuccessfulResponse[ResponseWithId]].payload shouldBe ResponseWithId(orderId)
     }
   }
 
   "add_item" should "add a new item" in new mocks {
-    import settings.JsonParsers.newItem
-    Post("/add_item", DomainTestData.newItem) ~> routes ~> check {
+    Post("/add_item", OrdersTestData.newItem) ~> routes ~> check {
 
       status shouldBe StatusCodes.OK
     }
