@@ -37,4 +37,3 @@ case class User(id: Id,
                 role: Role
                )
 
-case class LogAndPass(login: String, password: String)

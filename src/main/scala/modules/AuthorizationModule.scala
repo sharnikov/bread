@@ -3,11 +3,10 @@ package modules
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
-import akka.http.scaladsl.server.Directives.{parameters, path, post}
 import akka.http.scaladsl.server.Directives._
-import database.{LogAndPass, UserDAOImpl}
+import database.UserDAOImpl
 import http.Routes
-import services.{AuthorizationService, SimpleAuthorizationService}
+import services.{AuthorizationService, LogAndPass, SimpleAuthorizationService}
 import settings.JsonParsers._
 import akka.http.scaladsl.server.Route
 import settings.config.Settings

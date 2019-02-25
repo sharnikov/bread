@@ -1,7 +1,6 @@
 package test.data
 
-import database.LogAndPass
-import services.SessionId
+import services.{LogAndPass, SessionId}
 
 import scala.util.Random
 

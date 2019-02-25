@@ -21,3 +21,5 @@ case class NewItem(userId: Id, item: Item)
 case class GoodsPack(quantity: Int, goodId: Id) extends Embedded
 
 case class NewOrder(userId: Id, packs: List[GoodsPack])
+
+case class LogAndPass(login: String, password: String)
