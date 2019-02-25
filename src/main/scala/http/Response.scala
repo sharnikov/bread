@@ -4,7 +4,7 @@ import java.util.Date
 
 import errors.AppError
 import errors.AppError.ServiceException
-import spray.json.{JsObject, JsString, JsValue, JsonFormat, JsonWriter, RootJsonFormat, RootJsonReader, RootJsonWriter}
+import spray.json.{JsObject, JsString, JsValue, JsonFormat, JsonWriter, RootJsonReader, RootJsonWriter}
 import http.TimeJsonProtocol._
 
 trait Response[+A]

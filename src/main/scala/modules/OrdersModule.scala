@@ -7,23 +7,22 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import database.OrderStatus.Status
 import database.OrdersDAOImpl
-import http.Routes
+import http.RoutesUtils
 import services.Domain.Id
 import services.{OrdersService, OrdersServiceImpl, NewItem, NewOrder}
 import settings.JsonParsers._
-import settings.schedulers.MainContext
 
 class OrdersModule(dbModule: DatabaseModule, sessions: ConcurrentHashMap[String, Date])
-  extends Module with Routes with MainContext {
+  extends ModuleWithRoutes with RoutesUtils {
 
   override def name(): String = "Orders"
 
   val dao = new OrdersDAOImpl(dbModule.dbSchema)
   val catalogService = new OrdersServiceImpl(dao)
 
-  override def routes() = routes(catalogService)
+  override def routes(): Route = routes(catalogService)
 
-  def routes(catalogService: OrdersService): Route = Route.seal(
+  def routes(catalogService: OrdersService): Route =
     get {
       path("all_goods") {
         logger.warn(sessions.toString)
@@ -60,5 +59,4 @@ class OrdersModule(dbModule: DatabaseModule, sessions: ConcurrentHashMap[String,
         }
       }
     }
-  )
 }

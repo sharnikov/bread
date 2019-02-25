@@ -54,7 +54,8 @@ object OrdersTestData {
   val order = Order(
     id = None,
     userId = userId,
-    status = OrderStatus.NEW
+    status = OrderStatus.NEW,
+    creationDate = None
   )
 
   val item = Item(

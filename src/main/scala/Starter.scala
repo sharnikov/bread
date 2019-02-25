@@ -2,7 +2,7 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import modules._
 import settings.config.{AppSettings, Settings}
-import akka.http.scaladsl.server.Directives._
+import services.RoutesBuilderImpl
 import settings.schedulers.{MainContext, SimpleScheduledTaskManager}
 
 object Starter extends App with MainContext with LazyLogging {
@@ -17,8 +17,8 @@ object Starter extends App with MainContext with LazyLogging {
   val schedule = new SimpleScheduledTaskManager(authorizationModule.sessions, settings)
   schedule.start()
 
-  val routes = authorizationModule.routes() ~ ordersModule.routes()
+  val routesBuilder = new RoutesBuilderImpl(Seq(authorizationModule, ordersModule))
 
-  val routesModule = new RoutesModule(settings, routes)
+  val routesModule = new RoutesModule(settings, routesBuilder.routes())
   logger.info("App started")
 }
