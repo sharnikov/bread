@@ -11,14 +11,13 @@ object Starter extends App with MainContext with LazyLogging {
   logger.info("Config initialized")
 
   val dbModule = new DatabaseModule(settings)
-  val ordersModule = new OrdersModule(dbModule)
   val authorizationModule = new AuthorizationModule(dbModule, settings)
-  val catalogModule = new CatalogModule(ordersModule.dao, authorizationModule.sessions)
+  val ordersModule = new OrdersModule(dbModule, authorizationModule.sessions)
 
   val schedule = new SimpleScheduledTaskManager(authorizationModule.sessions, settings)
   schedule.start()
 
-  val routes = authorizationModule.routes() ~ catalogModule.routes()
+  val routes = authorizationModule.routes() ~ ordersModule.routes()
 
   val routesModule = new RoutesModule(settings, routes)
   logger.info("App started")

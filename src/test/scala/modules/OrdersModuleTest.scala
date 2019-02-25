@@ -7,18 +7,18 @@ import test.data.OrdersTestData.{category, goodsList, orderId, userId}
 import utils.TestStuff
 import akka.http.scaladsl.model.StatusCodes
 import database.{Good, OrderStatus, OrdersDAO}
-import services.{CatalogService, FullOrder, ResponseWithId}
+import services.{OrdersService, FullOrder, ResponseWithId}
 import settings.JsonParsers._
 import http.Completed
 import http.Response._
 import test.data.OrdersTestData
 
-class CatalogModuleTest extends TestStuff {
+class OrdersModuleTest extends TestStuff {
 
   trait mocks {
-    val ordersDao = stub[OrdersDAO]
-    val module = new CatalogModule(ordersDao, new ConcurrentHashMap[String, Date]())
-    val catalogService = stub[CatalogService]
+    val dbModule = stub[DatabaseModule]
+    val module = new OrdersModule(dbModule, new ConcurrentHashMap[String, Date]())
+    val catalogService = stub[OrdersService]
     val routes = module.routes(catalogService)
 
     (catalogService.getAllGoods _).when().returns(goodsList)

@@ -10,7 +10,7 @@ import settings.schedulers.ServiceContext
 
 import scala.concurrent.Future
 
-trait CatalogService {
+trait OrdersService {
   def getAllGoods(): Future[List[Good]]
   def getGoodsByCategory(category: String): Future[List[Good]]
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
@@ -19,7 +19,7 @@ trait CatalogService {
   def addItemToOrder(newItem: NewItem): Future[Completed]
 }
 
-class CatalogServiceImpl(dao: OrdersDAO) extends CatalogService with ServiceContext {
+class OrdersServiceImpl(dao: OrdersDAO) extends OrdersService with ServiceContext {
   override def getAllGoods(): Future[List[Good]] = dao.getAllGoods()
   override def getGoodsByCategory(category: String): Future[List[Good]] = dao.getGoodsByCategory(category)
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = dao.getOrderById(userId, orderId)

@@ -7,11 +7,11 @@ import org.scalatest.{FlatSpecLike, Matchers}
 import test.data.OrdersTestData._
 import utils.FutureUtils
 
-class CatalogServiceImplTest extends FlatSpecLike with Matchers with MockFactory with FutureUtils {
+class OrdersServiceImplTest extends FlatSpecLike with Matchers with MockFactory with FutureUtils {
 
   trait mocks {
     val dao = stub[OrdersDAO]
-    val catalogService = new CatalogServiceImpl(dao)
+    val catalogService = new OrdersServiceImpl(dao)
   }
 
   "addOrder" should "build order and items" in new mocks {
