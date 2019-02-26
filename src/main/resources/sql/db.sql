@@ -76,3 +76,7 @@ insert into USERS (login, name, secondname, password) values
 ('Vovan', 'Вовка', 'Нитуп', 'russia');
 
 -----------------------------------
+
+alter table ORDERS drop column creation_date;
+alter table ORDERS add column creation_date timestamp not null default current_timestamp;
+--------------
