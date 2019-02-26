@@ -12,13 +12,15 @@ import ru.bread.http.routes.RoutesUtils
 import ru.bread.services.external.{AuthorizationService, SimpleAuthorizationService}
 import ru.bread.settings.config.Settings
 
-class AuthorizationModule(dbModule: DatabaseModule, settings: Settings) extends ModuleWithRoutes with RoutesUtils {
+class AuthorizationModule(dbModule: DatabaseModule,
+                          commonModule: CommonModule,
+                          settings: Settings) extends ModuleWithRoutes with RoutesUtils {
   override def name(): String = "Authorization"
 
   val sessions: ConcurrentHashMap[String, Date] = new ConcurrentHashMap[String, Date]()
 
   val userDao = new UserDAOImpl(dbModule.dbSchema)
-  val authorizationService = new SimpleAuthorizationService(userDao, sessions, settings)
+  val authorizationService = new SimpleAuthorizationService(userDao, commonModule.timeProvider, sessions, settings)
 
   override def routes(): Route = routes(authorizationService)
 

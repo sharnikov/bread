@@ -1,15 +1,13 @@
 package test.data
 
-import java.util.Date
-
 import ru.bread.database.{Good, Item, Order, OrderStatus}
 import ru.bread.services.Domain.Id
 import ru.bread.services._
+import test.data.CommonTestData._
 
 object OrdersTestData {
 
   val category = "cat"
-  val time = new Date(1551173108000L)
 
   val userId: Id = 1
   val userId2: Id = 2

@@ -13,9 +13,10 @@ class AuthorizationModuleTest extends TestStuff {
 
   trait mocks {
     val dbModule = stub[DatabaseModule]
+    val commonModule = stub[CommonModule]
     val settings = stub[Settings]
     val authorizationService = stub[AuthorizationService]
-    val module = new AuthorizationModule(dbModule, settings)
+    val module = new AuthorizationModule(dbModule, commonModule, settings)
     val routes = module.routes(authorizationService)
 
     (authorizationService.login _).when(login, password).returns(sessionId)

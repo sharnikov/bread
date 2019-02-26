@@ -1,12 +1,13 @@
-package ru.bread.services
+package ru.bread.services.external
 
-import ru.bread.errors.AppError.DatabaseException
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, Matchers}
 import ru.bread.database.services.OrdersDAO
-import ru.bread.services.external.OrdersServiceImpl
+import ru.bread.errors.AppError.DatabaseException
+import ru.bread.services.ResponseWithId
 import ru.bread.services.internal.FixedTimeProvider
 import test.data.OrdersTestData._
+import test.data.CommonTestData._
 import utils.FutureUtils
 
 class OrdersServiceImplTest extends FlatSpecLike with Matchers with MockFactory with FutureUtils {

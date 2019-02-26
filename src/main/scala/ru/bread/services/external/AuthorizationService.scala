@@ -8,6 +8,7 @@ import ru.bread.database.services.UserDAO
 import ru.bread.errors.AppError.VerboseServiceException
 import ru.bread.errors.ErrorCode.AuthorizationError
 import ru.bread.services.SessionId
+import ru.bread.services.internal.TimeProvider
 import ru.bread.settings.config.Settings
 import ru.bread.settings.schedulers.ServiceContext
 
@@ -18,7 +19,10 @@ trait AuthorizationService {
   def login(login: String, password: String): Future[SessionId]
 }
 
-class SimpleAuthorizationService(userDAO: UserDAO, sessions: ConcurrentHashMap[String, Date], settings: Settings)
+class SimpleAuthorizationService(userDAO: UserDAO,
+                                 timeProvider: TimeProvider,
+                                 sessions: ConcurrentHashMap[String, Date],
+                                 settings: Settings)
   extends AuthorizationService with ServiceContext with LazyLogging {
 
   override def login(login: String, password: String): Future[SessionId] = {
@@ -33,7 +37,7 @@ class SimpleAuthorizationService(userDAO: UserDAO, sessions: ConcurrentHashMap[S
   private def updateSession(sessionId: Option[String] = None): String = {
 
     def updateSession(currentId: String) = {
-      val date = new Date(System.currentTimeMillis())
+      val date = timeProvider.currentTime
       sessions.put(currentId, date)
     }
 

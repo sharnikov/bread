@@ -14,7 +14,7 @@ object Starter extends App with MainContext with LazyLogging {
 
   val commonModule = new CommonModule()
   val dbModule = new DatabaseModule(settings)
-  val authorizationModule = new AuthorizationModule(dbModule, settings)
+  val authorizationModule = new AuthorizationModule(dbModule, commonModule, settings)
   val ordersModule = new OrdersModule(dbModule, commonModule, authorizationModule.sessions)
 
   val schedule = new SimpleScheduledTaskManager(authorizationModule.sessions, settings)
