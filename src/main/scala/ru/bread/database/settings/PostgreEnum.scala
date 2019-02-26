@@ -1,4 +1,4 @@
-package ru.bread.database
+package ru.bread.database.settings
 
 import akka.http.scaladsl.unmarshalling.Unmarshaller
 

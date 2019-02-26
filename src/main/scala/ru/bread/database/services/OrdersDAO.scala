@@ -1,11 +1,10 @@
-package ru.bread.database
-
-import java.util.Date
+package ru.bread.database.services
 
 import ru.bread.database.OrderStatus.Status
-import ru.bread.errors.AppError.{BreadException, DatabaseException}
-import ru.bread.errors.ErrorCode
-import ru.bread.http.Completed
+import ru.bread.database._
+import ru.bread.database.settings.PostgresSchema
+import ru.bread.errors.AppError.DatabaseException
+import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
 import ru.bread.services.{FullGoodPack, FullOrder}
 import ru.bread.settings.schedulers.DatabaseContext

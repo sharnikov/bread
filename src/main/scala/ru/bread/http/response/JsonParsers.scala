@@ -1,12 +1,11 @@
-package ru.bread.settings
+package ru.bread.http.response
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import ru.bread.database._
-import ru.bread.http.TimeJsonProtocol
+import ru.bread.database.{Good, Item}
 import ru.bread.services._
 import spray.json.DefaultJsonProtocol
 
-object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport with TimeJsonProtocol {
+object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport with TimeJsonParser {
 
   implicit val idResponseFormat = jsonFormat1(ResponseWithId)
 

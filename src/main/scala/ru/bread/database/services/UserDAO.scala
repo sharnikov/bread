@@ -1,5 +1,7 @@
-package ru.bread.database
+package ru.bread.database.services
 
+import ru.bread.database.User
+import ru.bread.database.settings.PostgresSchema
 import ru.bread.settings.schedulers.DatabaseContext
 
 import scala.concurrent.Future

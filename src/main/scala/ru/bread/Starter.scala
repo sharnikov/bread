@@ -3,7 +3,7 @@ package ru.bread
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
 import ru.bread.modules._
-import ru.bread.services.RoutesBuilderImpl
+import ru.bread.services.internal.RoutesBuilderImpl
 import ru.bread.settings.config.{AppSettings, Settings}
 import ru.bread.settings.schedulers.{MainContext, SimpleScheduledTaskManager}
 

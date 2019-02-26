@@ -1,12 +1,13 @@
-package ru.bread.services
+package ru.bread.services.external
 
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
 import com.typesafe.scalalogging.LazyLogging
-import ru.bread.database.UserDAO
+import ru.bread.database.services.UserDAO
 import ru.bread.errors.AppError.VerboseServiceException
 import ru.bread.errors.ErrorCode.AuthorizationError
+import ru.bread.services.SessionId
 import ru.bread.settings.config.Settings
 import ru.bread.settings.schedulers.ServiceContext
 

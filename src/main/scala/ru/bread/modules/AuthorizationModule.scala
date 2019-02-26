@@ -4,11 +4,12 @@ import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
 import akka.http.scaladsl.server.Directives._
-import ru.bread.database.UserDAOImpl
-import ru.bread.http.RoutesUtils
-import ru.bread.services.{AuthorizationService, LogAndPass, SimpleAuthorizationService}
-import ru.bread.settings.JsonParsers._
+import ru.bread.services.LogAndPass
+import ru.bread.http.response.JsonParsers._
 import akka.http.scaladsl.server.Route
+import ru.bread.database.services.UserDAOImpl
+import ru.bread.http.routes.RoutesUtils
+import ru.bread.services.external.{AuthorizationService, SimpleAuthorizationService}
 import ru.bread.settings.config.Settings
 
 class AuthorizationModule(dbModule: DatabaseModule, settings: Settings) extends ModuleWithRoutes with RoutesUtils {

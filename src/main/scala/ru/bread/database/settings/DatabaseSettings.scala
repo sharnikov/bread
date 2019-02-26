@@ -1,4 +1,4 @@
-package ru.bread.database
+package ru.bread.database.settings
 
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.postgresql.PostgreSQLConnection

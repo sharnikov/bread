@@ -7,10 +7,11 @@ import test.data.OrdersTestData.{category, goodsList, orderId, userId}
 import utils.TestStuff
 import akka.http.scaladsl.model.StatusCodes
 import ru.bread.database.{Good, OrderStatus}
-import ru.bread.services.{FullOrder, OrdersService, ResponseWithId}
-import ru.bread.settings.JsonParsers._
-import ru.bread.http.Completed
-import ru.bread.http.Response._
+import ru.bread.services.{FullOrder, ResponseWithId}
+import ru.bread.http.response.JsonParsers._
+import ru.bread.http.response.Completed
+import ru.bread.http.response.Response.SuccessfulResponse
+import ru.bread.services.external.OrdersService
 import test.data.OrdersTestData._
 
 class OrdersModuleTest extends TestStuff {

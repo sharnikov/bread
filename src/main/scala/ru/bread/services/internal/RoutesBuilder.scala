@@ -1,8 +1,8 @@
-package ru.bread.services
+package ru.bread.services.internal
 
-import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
-import ru.bread.http.RoutesSettings
+import akka.http.scaladsl.server.Route
+import ru.bread.http.routes.RoutesSettings
 import ru.bread.modules.ModuleWithRoutes
 
 trait RoutesBuilder {

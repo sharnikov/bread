@@ -1,6 +1,6 @@
 package ru.bread.modules
 
-import ru.bread.database.{DatabaseSettings, PostgresSchema}
+import ru.bread.database.settings.{DatabaseSettings, PostgresSchema}
 import ru.bread.settings.config.Settings
 
 class DatabaseModule(settings: Settings) extends Module {

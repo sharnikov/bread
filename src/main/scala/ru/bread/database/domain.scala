@@ -5,6 +5,7 @@ import java.util.Date
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database.Role.Role
 import io.getquill.Embedded
+import ru.bread.database.settings.PostgreEnum
 import ru.bread.services.Domain.Id
 
 object OrderStatus extends PostgreEnum {

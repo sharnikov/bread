@@ -1,13 +1,13 @@
-package ru.bread.services
-
-import java.util.Date
+package ru.bread.services.external
 
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database._
-import ru.bread.errors.AppError.{DatabaseException, VerboseServiceException}
-import ru.bread.errors.ErrorCode
-import ru.bread.http.Completed
+import ru.bread.database.services.OrdersDAO
+import ru.bread.errors.AppError.DatabaseException
+import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
+import ru.bread.services._
+import ru.bread.services.internal.TimeProvider
 import ru.bread.settings.schedulers.ServiceContext
 
 import scala.concurrent.Future

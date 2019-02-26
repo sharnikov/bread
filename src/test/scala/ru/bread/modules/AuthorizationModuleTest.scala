@@ -1,13 +1,13 @@
 package ru.bread.modules
 
 import akka.http.scaladsl.model.StatusCodes
-import ru.bread.http.Response.SuccessfulResponse
-import ru.bread.services.{AuthorizationService, SessionId}
+import ru.bread.services.SessionId
 import ru.bread.settings.config.Settings
 import utils.TestStuff
 import test.data.AuthTestData._
-import ru.bread.settings.JsonParsers._
-import ru.bread.http.Response._
+import ru.bread.http.response.JsonParsers._
+import ru.bread.http.response.Response.SuccessfulResponse
+import ru.bread.services.external.AuthorizationService
 
 class AuthorizationModuleTest extends TestStuff {
 

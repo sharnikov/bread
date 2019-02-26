@@ -1,4 +1,4 @@
-package ru.bread.http
+package ru.bread.http.response
 
 import java.io.Serializable
 

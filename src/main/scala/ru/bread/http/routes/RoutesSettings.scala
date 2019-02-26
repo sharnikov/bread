@@ -1,12 +1,11 @@
-package ru.bread.http
+package ru.bread.http.routes
 
 import akka.http.scaladsl.server.Directives.complete
 import akka.http.scaladsl.server.ExceptionHandler
 import com.typesafe.scalalogging.LazyLogging
-import ru.bread.settings.JsonParsers._
-import ru.bread.http.Response._
-import ru.bread.http.Response.fail
 import ru.bread.errors.AppError.{DatabaseException, ServiceException, VerboseServiceException}
+import ru.bread.http.response.Response._
+import ru.bread.http.response.JsonParsers._
 import ru.bread.errors.ErrorCode
 
 trait RoutesSettings extends LazyLogging {

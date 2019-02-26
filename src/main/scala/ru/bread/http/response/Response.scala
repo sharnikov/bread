@@ -1,11 +1,11 @@
-package ru.bread.http
+package ru.bread.http.response
 
 import java.util.Date
 
 import ru.bread.errors.AppError
 import ru.bread.errors.AppError.ParseFailedException
+import ru.bread.http.response.TimeJsonParser._
 import spray.json.{JsObject, JsString, JsValue, JsonFormat, JsonWriter, RootJsonReader, RootJsonWriter}
-import ru.bread.http.TimeJsonProtocol._
 
 trait Response[+A]
 

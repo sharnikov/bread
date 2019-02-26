@@ -1,10 +1,11 @@
-package ru.bread.database
+package ru.bread.database.settings
 
+import io.getquill.context.async.SqlTypes
+import io.getquill.{Escape, PostgresAsyncContext}
+import org.postgresql.util.PGobject
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database.Role.Role
-import io.getquill.{Escape, PostgresAsyncContext}
-import io.getquill.context.async.SqlTypes
-import org.postgresql.util.PGobject
+import ru.bread.database._
 
 class PostgresSchema(val dbContext: PostgresAsyncContext[Escape]) {
 

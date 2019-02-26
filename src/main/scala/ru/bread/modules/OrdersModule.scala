@@ -6,11 +6,12 @@ import java.util.concurrent.ConcurrentHashMap
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import ru.bread.database.OrderStatus.Status
-import ru.bread.database.OrdersDAOImpl
-import ru.bread.http.RoutesUtils
+import ru.bread.database.services.OrdersDAOImpl
 import ru.bread.services.Domain.Id
 import ru.bread.services._
-import ru.bread.settings.JsonParsers._
+import ru.bread.services.external.{OrdersService, OrdersServiceImpl}
+import ru.bread.http.response.JsonParsers._
+import ru.bread.http.routes.RoutesUtils
 
 class OrdersModule(dbModule: DatabaseModule,
                    commonModule: CommonModule,

@@ -1,4 +1,4 @@
-package ru.bread.services
+package ru.bread.services.internal
 
 import java.util.Date
 

@@ -1,4 +1,4 @@
-package ru.bread.http
+package ru.bread.http.response
 
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -8,7 +8,7 @@ import spray.json.{JsString, JsValue, RootJsonFormat}
 
 import scala.util.Try
 
-trait TimeJsonProtocol {
+trait TimeJsonParser {
 
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
@@ -26,4 +26,4 @@ trait TimeJsonProtocol {
   private def parseIsoDateString(date: String): Option[Date] = Try{ dateFormat.parse(date) }.toOption
 }
 
-object TimeJsonProtocol extends TimeJsonProtocol
+object TimeJsonParser extends TimeJsonParser

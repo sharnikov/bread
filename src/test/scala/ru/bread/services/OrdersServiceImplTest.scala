@@ -1,9 +1,11 @@
 package ru.bread.services
 
-import ru.bread.database.OrdersDAO
 import ru.bread.errors.AppError.DatabaseException
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, Matchers}
+import ru.bread.database.services.OrdersDAO
+import ru.bread.services.external.OrdersServiceImpl
+import ru.bread.services.internal.FixedTimeProvider
 import test.data.OrdersTestData._
 import utils.FutureUtils
 
