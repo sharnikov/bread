@@ -18,7 +18,8 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
   )
 
   val utilLibraries = Seq(
-    "org.typelevel" %% "cats-core" % "1.1.0"
+    "org.typelevel" %% "cats-core" % "1.1.0",
+    "commons-codec" % "commons-codec" % "1.12"
   )
 
   val akka = Seq(
