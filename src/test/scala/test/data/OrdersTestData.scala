@@ -2,9 +2,9 @@ package test.data
 
 import java.util.Date
 
-import database.{Good, Item, Order, OrderStatus}
-import services.Domain.Id
-import services._
+import ru.bread.database.{Good, Item, Order, OrderStatus}
+import ru.bread.services.Domain.Id
+import ru.bread.services._
 
 object OrdersTestData {
 

@@ -1,6 +1,6 @@
 package test.data
 
-import services.{LogAndPass, SessionId}
+import ru.bread.services.{LogAndPass, SessionId}
 
 import scala.util.Random
 
