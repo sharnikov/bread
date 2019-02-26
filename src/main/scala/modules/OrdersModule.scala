@@ -9,16 +9,18 @@ import database.OrderStatus.Status
 import database.OrdersDAOImpl
 import http.RoutesUtils
 import services.Domain.Id
-import services.{OrdersService, OrdersServiceImpl, NewItem, NewOrder}
+import services._
 import settings.JsonParsers._
 
-class OrdersModule(dbModule: DatabaseModule, sessions: ConcurrentHashMap[String, Date])
+class OrdersModule(dbModule: DatabaseModule,
+                   commonModule: CommonModule,
+                   sessions: ConcurrentHashMap[String, Date])
   extends ModuleWithRoutes with RoutesUtils {
 
   override def name(): String = "Orders"
 
   val dao = new OrdersDAOImpl(dbModule.dbSchema)
-  val catalogService = new OrdersServiceImpl(dao)
+  val catalogService = new OrdersServiceImpl(dao, commonModule.timeProvider)
 
   override def routes(): Route = routes(catalogService)
 

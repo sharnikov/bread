@@ -43,7 +43,7 @@ class PostgresSchema(val dbContext: PostgresAsyncContext[Escape]) {
   }
 
   val orders = quote {
-    querySchema[Order]("orders", _.id -> "id", _.userId -> "user_id", _.status -> "status")
+    querySchema[Order]("orders", _.id -> "id", _.userId -> "user_id", _.status -> "status", _.creationDate -> "creation_date")
   }
 
   val users = quote {

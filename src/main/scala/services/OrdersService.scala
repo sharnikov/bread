@@ -1,8 +1,10 @@
 package services
 
+import java.util.Date
+
 import database.OrderStatus.Status
 import database._
-import errors.AppError.VerboseServiceException
+import errors.AppError.{DatabaseException, VerboseServiceException}
 import errors.ErrorCode
 import http.Completed
 import services.Domain.Id
@@ -19,7 +21,7 @@ trait OrdersService {
   def addItemToOrder(newItem: NewItem): Future[Completed]
 }
 
-class OrdersServiceImpl(dao: OrdersDAO) extends OrdersService with ServiceContext {
+class OrdersServiceImpl(dao: OrdersDAO, timeProvider: TimeProvider) extends OrdersService with ServiceContext {
   override def getAllGoods(): Future[List[Good]] = dao.getAllGoods()
   override def getGoodsByCategory(category: String): Future[List[Good]] = dao.getGoodsByCategory(category)
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = dao.getOrderById(userId, orderId)
@@ -28,7 +30,8 @@ class OrdersServiceImpl(dao: OrdersDAO) extends OrdersService with ServiceContex
     val order = Order(
       id = None,
       userId = newOrder.userId,
-      status = OrderStatus.NEW
+      status = OrderStatus.NEW,
+      creationDate = timeProvider.currentTime
     )
 
     val items = newOrder.packs.map(pack => Item(
@@ -38,7 +41,7 @@ class OrdersServiceImpl(dao: OrdersDAO) extends OrdersService with ServiceContex
     ))
 
     dao.addOrder(order, items).map(orderId => ResponseWithId(orderId.getOrElse(
-      throw new VerboseServiceException(ErrorCode.DataNotFound, "Could not retrieve orderId")
+      throw new DatabaseException("Could not retrieve orderId")
     )))
   }
 

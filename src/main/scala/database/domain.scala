@@ -1,5 +1,7 @@
 package database
 
+import java.util.Date
+
 import database.OrderStatus.Status
 import database.Role.Role
 import io.getquill.Embedded
@@ -25,7 +27,7 @@ object Role extends PostgreEnum {
 
 case class Item(goodId: Id, orderId: Option[Id], quantity: Int)
 
-case class Order(id: Option[Id], userId: Id, status: Status)
+case class Order(id: Option[Id], userId: Id, status: Status, creationDate: Date)
 
 case class Good(id: Id, name: String, category: String, price: Double) extends Embedded
 

@@ -2,10 +2,11 @@ package settings
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import database._
+import http.TimeJsonProtocol
 import services._
 import spray.json.DefaultJsonProtocol
 
-object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport {
+object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport with TimeJsonProtocol {
 
   implicit val idResponseFormat = jsonFormat1(ResponseWithId)
 
@@ -15,7 +16,7 @@ object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val fullGoodpackFormat = jsonFormat2(FullGoodPack)
 
-  implicit val fullOrderFormat = jsonFormat3(FullOrder)
+  implicit val fullOrderFormat = jsonFormat4(FullOrder)
 
   implicit val goodsPackFormat = jsonFormat2(GoodsPack)
 

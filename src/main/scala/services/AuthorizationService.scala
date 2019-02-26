@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap
 import com.typesafe.scalalogging.LazyLogging
 import database.UserDAO
 import errors.AppError.VerboseServiceException
-import errors.ErrorCode.DataNotFound
+import errors.ErrorCode.AuthorizationError
 import settings.config.Settings
 import settings.schedulers.ServiceContext
 
@@ -24,7 +24,7 @@ class SimpleAuthorizationService(userDAO: UserDAO, sessions: ConcurrentHashMap[S
     userDAO.getUser(login, password).map { userOpt =>
       userOpt.map(_ => SessionId(updateSession())).getOrElse {
         logger.error(s"User with login $login wasn't found")
-        throw new VerboseServiceException(DataNotFound, "Wrong login or password")
+        throw new VerboseServiceException(AuthorizationError, "Wrong login or password")
       }
     }
   }

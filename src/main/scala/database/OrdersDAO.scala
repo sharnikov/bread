@@ -1,5 +1,7 @@
 package database
 
+import java.util.Date
+
 import database.OrderStatus.Status
 import errors.AppError.{BreadException, DatabaseException}
 import errors.ErrorCode
@@ -32,21 +34,25 @@ class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseConte
     run(schema.goods.filter(_.category != lift(category)))
   }
 
-  override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = {
-    run(
-      schema.orders.filter(_.userId == lift(userId))
-        .join(schema.items).on((order, item) => order.id.exists(item.orderId.contains) && order.id.contains(lift(orderId)))
-        .map { case (_, item) => item }
-        .join(schema.goods).on((item, good) => item.goodId == good.id)
-        .map { case (item, good) => FullGoodPack(item.quantity, good) }
-    ).map { goodsWithQuantity =>
+  override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] =
+    for {
+      orders <- run(orders.filter(order => order.userId == lift(userId) && order.id.contains(lift(orderId))))
+      order = orders.headOption.getOrElse(
+        throw new DatabaseException(s"There is no order with such an orderId = $orderId")
+      )
+      goodsWithQuantity <- run(
+        items.filter(item =>  item.orderId.contains(lift(orderId)))
+          .join(goods).on((item, good) => item.goodId == good.id)
+          .map { case (item, good) => FullGoodPack(item.quantity, good) }
+      )
+    } yield {
       FullOrder(
         userId = userId,
         id = orderId,
-        packs = goodsWithQuantity
+        packs = goodsWithQuantity,
+        creationDate = order.creationDate
       )
     }
-  }
 
   override def addOrder(order: Order, items: List[Item]): Future[Option[Id]] = {
 
@@ -73,7 +79,7 @@ class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseConte
         order = orders.headOption
         _ = if (order.isEmpty) throw new DatabaseException(s"There is no such an order")
         _ = if (order.exists(_.status != OrderStatus.NEW))
-          throw new BreadException(ErrorCode.DataNotFound, s"Order status is ${orders.headOption.map(_.status)}, but must be NEW")
+          throw new DatabaseException(s"Order status is ${orders.headOption.map(_.status)}, but must be NEW")
         currentItems <- run(schema.items.filter { item =>
           val liftedNewItem = lift(newItem)
           item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)

@@ -1,5 +1,7 @@
 package test.data
 
+import java.util.Date
+
 import database.{Good, Item, Order, OrderStatus}
 import services.Domain.Id
 import services._
@@ -7,6 +9,7 @@ import services._
 object OrdersTestData {
 
   val category = "cat"
+  val time = new Date(1551173108000L)
 
   val userId: Id = 1
   val userId2: Id = 2
@@ -33,7 +36,8 @@ object OrdersTestData {
   val fullOrder = FullOrder(
     userId = userId,
     id = orderId,
-    packs = List(fullGoodPack, fullGoodPack2)
+    packs = List(fullGoodPack, fullGoodPack2),
+    creationDate = time
   )
 
   val goodPack = GoodsPack(
@@ -55,7 +59,7 @@ object OrdersTestData {
     id = None,
     userId = userId,
     status = OrderStatus.NEW,
-    creationDate = None
+    creationDate = time
   )
 
   val item = Item(

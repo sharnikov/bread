@@ -3,7 +3,7 @@ package http
 import java.util.Date
 
 import errors.AppError
-import errors.AppError.ServiceException
+import errors.AppError.ParseFailedException
 import spray.json.{JsObject, JsString, JsValue, JsonFormat, JsonWriter, RootJsonReader, RootJsonWriter}
 import http.TimeJsonProtocol._
 
@@ -14,7 +14,7 @@ object Response {
   implicit def jsonSuccessReader[T](implicit payloadFormat : JsonFormat[T])= new RootJsonReader[SuccessfulResponse[T]] {
     override def read(json: JsValue): SuccessfulResponse[T] = json match {
       case JsObject(fields) => pasreSuccesfulResponse(fields)
-      case _ => throw new ServiceException(s"Can't parse SuccessfulResponse in $json")
+      case _ => throw new ParseFailedException(s"Can't parse SuccessfulResponse in $json")
     }
 
     private def pasreSuccesfulResponse(fields: Map[String, JsValue]) =
@@ -26,7 +26,7 @@ object Response {
           payload = payloadFormat.read(payload),
           time = implicitly[JsonFormat[Date]]read(time)
         )
-      }).getOrElse(throw new ServiceException(s"Can't parse SuccessfulResponse with fields = $fields"))
+      }).getOrElse(throw new ParseFailedException(s"Can't parse SuccessfulResponse with fields = $fields"))
   }
 
   implicit def jsonSuccessWriter[T](implicit payloadFormat : JsonWriter[T])= new RootJsonWriter[SuccessfulResponse[T]] {
