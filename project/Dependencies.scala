@@ -23,14 +23,14 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
   )
 
   val akka = Seq(
-    "com.typesafe.akka" %% "akka-ru.bread.http" % akkaVersion,
-    "com.typesafe.akka" %% "akka-ru.bread.http-xml" % akkaVersion,
-    "com.typesafe.akka" %% "akka-ru.bread.http-spray-json" % akkaVersion,
-    "de.heikoseeberger" %% "akka-ru.bread.http-circe" % "1.19.0-M3" exclude("com.typesafe.akka", "akka-actor"),
+    "com.typesafe.akka" %% "akka-http" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http-xml" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http-spray-json" % akkaVersion,
+    "de.heikoseeberger" %% "akka-http-circe" % "1.19.0-M3" exclude("com.typesafe.akka", "akka-actor"),
     "com.typesafe.akka" %% "akka-stream" % akkaStreamsVersion,
     "com.typesafe.akka" %% "akka-slf4j" % akkaStreamsVersion,
     "com.typesafe.akka" %% "akka-testkit" % akkaStreamsVersion % Test,
-    "com.typesafe.akka" %% "akka-ru.bread.http-testkit" % akkaVersion % Test
+    "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % Test
   )
 
   val json = Seq(
