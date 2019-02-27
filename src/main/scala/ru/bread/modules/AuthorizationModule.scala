@@ -20,7 +20,13 @@ class AuthorizationModule(dbModule: DatabaseModule,
   val sessions: ConcurrentHashMap[String, Date] = new ConcurrentHashMap[String, Date]()
 
   val userDao = new UserDAOImpl(dbModule.dbSchema)
-  val authorizationService = new SimpleAuthorizationService(userDao, commonModule.timeProvider, sessions, settings)
+  val authorizationService = new SimpleAuthorizationService(
+    userDAO = userDao,
+    sessionGenerator = commonModule.sessionGenerator,
+    encryptService = commonModule.encryptService,
+    timeProvider = commonModule.timeProvider,
+    sessions = sessions
+  )
 
   override def routes(): Route = routes(authorizationService)
 

@@ -3,7 +3,6 @@ package ru.bread.modules
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
-import test.data.OrdersTestData.{category, goodsList, orderId, userId}
 import utils.TestStuff
 import akka.http.scaladsl.model.StatusCodes
 import ru.bread.database.{Good, OrderStatus}
@@ -13,6 +12,8 @@ import ru.bread.http.response.Completed
 import ru.bread.http.response.Response.SuccessfulResponse
 import ru.bread.services.external.OrdersService
 import test.data.OrdersTestData._
+import test.data.CommonTestData._
+
 
 class OrdersModuleTest extends TestStuff {
 

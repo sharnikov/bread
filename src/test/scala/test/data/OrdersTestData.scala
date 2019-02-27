@@ -9,9 +9,6 @@ object OrdersTestData {
 
   val category = "cat"
 
-  val userId: Id = 1
-  val userId2: Id = 2
-
   val orderId: Id = 3
   val orderId2: Id = 4
 

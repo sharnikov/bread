@@ -9,17 +9,18 @@ trait Settings {
   def akkaSettings(): Akka
   def sessionSettings(): Session
   def schedulerSettings(): Scheduler
+  def commonSettings(): Common
 }
 
 class AppSettings(config: Config) extends Settings {
-  override def akkaSettings: Akka = new AkkaSettings(config.as[Config]("akka.ru.bread.http"))
+  override def akkaSettings: Akka = new AkkaSettings(config.as[Config]("akka.http"))
   override def sessionSettings(): Session = new SessionSettings(config.as[Config]("session"))
   override def schedulerSettings(): Scheduler = new SchedulerSettings(config.as[Config]("scheduler"))
+  override def commonSettings(): Common = new CommonSettings(config.as[Config]("common"))
 }
 
 object Settings {
   implicit class duration(duration: java.time.Duration) {
     def toScalaDuration() = Duration.fromNanos(duration.toNanos)
   }
-
 }

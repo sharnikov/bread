@@ -36,7 +36,7 @@ case class User(id: Id,
                 login: String,
                 name: Option[String],
                 secondName: Option[String],
-                password: String,
+                password: Option[String],
                 role: Role
                )
 

@@ -19,13 +19,13 @@ class AuthorizationModuleTest extends TestStuff {
     val module = new AuthorizationModule(dbModule, commonModule, settings)
     val routes = module.routes(authorizationService)
 
-    (authorizationService.login _).when(login, password).returns(sessionId)
+    (authorizationService.login _).when(login, password).returns(wrappedSessionId)
   }
 
   "login" should "return sessionId" in new mocks {
 
     Post("/login", logAndPass) ~> routes ~> check {
-      responseAs[SuccessfulResponse[SessionId]].payload shouldEqual sessionId
+      responseAs[SuccessfulResponse[SessionId]].payload shouldEqual wrappedSessionId
       status shouldBe StatusCodes.OK
     }
   }
