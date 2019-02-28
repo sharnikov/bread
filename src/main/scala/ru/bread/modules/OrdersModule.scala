@@ -30,33 +30,25 @@ class OrdersModule(dbModule: DatabaseModule,
       path("all_goods") {
         logger.warn(sessions.toString)
         completeResult(catalogService.getAllGoods())
-      }
-    } ~ get {
-      path("goods_by_category") {
+      } ~ path("goods_by_category") {
         parameters('category.as[String]) { category =>
           completeResult(catalogService.getGoodsByCategory(category))
         }
-      }
-    } ~ get {
-      path("order_by_id") {
+      } ~ path("order_by_id") {
         parameters('userId.as[Id], 'orderId.as[Id]) { (userId, orderId) =>
           completeResult(catalogService.getOrderById(userId, orderId))
         }
       }
-    } ~ post {
+    }~ post {
       path("add_order") {
         entity(as[NewOrder]) { order =>
           completeResult(catalogService.addOrder(order))
         }
-      }
-    } ~ post {
-      path("change_status") {
+      } ~ path("change_status") {
         parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
           completeResult(catalogService.changeStatus(orderId, status))
         }
-      }
-    } ~ post {
-      path("add_item") {
+      } ~ path("add_item") {
         entity(as[NewItem]) { newItem =>
           completeResult(catalogService.addItemToOrder(newItem))
         }
