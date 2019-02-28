@@ -22,7 +22,7 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
 
     (session.size _).when().returns(30)
 
-    val authorizationService = new SimpleAuthorizationService(
+    val authorizationService = new BasicAuthorizationService(
       userDAO,
       sessionGenerator,
       encryptService,
@@ -31,24 +31,35 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
     )
   }
 
-  "login" should "failed when login or password is wrong" in new mocks {
+  "authorize" should "return none if user wasn't found" in new mocks {
 
-    (userDAO.getUser _).when(login, encryptedPassword).returns(None)
-    (encryptService.encrypt _).when(password).returns(encryptedPassword)
+    (userDAO.getUser _).when(login).returns(None)
 
-    awaitFailed[VerboseServiceException](
-      authorizationService.login(login, password)
-    ).getMessage shouldBe "Wrong login or password"
+    await(
+      authorizationService.authorize(trueCredentials)
+    ) shouldBe None
+
     (sessions.put _).verify(sessionId, time).never()
+    (encryptService.encrypt _).verify(password).never()
   }
 
-  "login" should "put session in the map and return it" in new mocks {
+  "authorize" should "return none if password is wrong" in new mocks {
 
-    (userDAO.getUser _).when(login, encryptedPassword).returns(Some(user))
+    (userDAO.getUser _).when(login).returns(Some(user))
     (encryptService.encrypt _).when(password).returns(encryptedPassword)
     (sessionGenerator.generateSession _).when().returns(sessionId)
 
-    await(authorizationService.login(login, password)) shouldBe wrappedSessionId
+    await(authorizationService.authorize(falseCredentials)) shouldBe None
+    (sessions.put _).verify(sessionId, time).never()
+  }
+
+  "authorize" should "put session in the map and return it" in new mocks {
+
+    (userDAO.getUser _).when(login).returns(Some(user))
+    (encryptService.encrypt _).when(password).returns(encryptedPassword)
+    (sessionGenerator.generateSession _).when().returns(sessionId)
+
+    await(authorizationService.authorize(trueCredentials)) shouldBe Some(wrappedSessionId)
     (sessions.put _).verify(sessionId, time).once()
   }
 }

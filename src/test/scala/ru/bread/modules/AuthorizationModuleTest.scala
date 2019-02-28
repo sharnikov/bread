@@ -6,6 +6,7 @@ import ru.bread.settings.config.Settings
 import utils.TestStuff
 import test.data.AuthTestData._
 import ru.bread.http.response.JsonParsers._
+import ru.bread.http.response.Response._
 import ru.bread.http.response.Response.SuccessfulResponse
 import ru.bread.services.external.AuthorizationService
 
@@ -19,12 +20,12 @@ class AuthorizationModuleTest extends TestStuff {
     val module = new AuthorizationModule(dbModule, commonModule, settings)
     val routes = module.routes(authorizationService)
 
-    (authorizationService.login _).when(login, password).returns(wrappedSessionId)
+    (authorizationService.authorize _).when(trueCredentials).returns(Some(wrappedSessionId))
   }
 
-  "login" should "return sessionId" in new mocks {
+  "sign_up" should "return sessionId" in new mocks {
 
-    Post("/login", logAndPass) ~> routes ~> check {
+    Post("/sign_up") ~> addCredentials(basicHttpCredentials) ~> routes ~> check {
       responseAs[SuccessfulResponse[SessionId]].payload shouldEqual wrappedSessionId
       status shouldBe StatusCodes.OK
     }

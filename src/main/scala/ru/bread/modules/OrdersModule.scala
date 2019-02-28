@@ -44,19 +44,19 @@ class OrdersModule(dbModule: DatabaseModule,
         }
       }
     } ~ post {
-      path ("add_order") {
+      path("add_order") {
         entity(as[NewOrder]) { order =>
           completeResult(catalogService.addOrder(order))
         }
       }
     } ~ post {
-      path ("change_status") {
+      path("change_status") {
         parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
           completeResult(catalogService.changeStatus(orderId, status))
         }
       }
     } ~ post {
-      path ("add_item") {
+      path("add_item") {
         entity(as[NewItem]) { newItem =>
           completeResult(catalogService.addItemToOrder(newItem))
         }
