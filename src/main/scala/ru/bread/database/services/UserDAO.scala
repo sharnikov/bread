@@ -15,7 +15,7 @@ class UserDAOImpl(schema: PostgresSchema) extends UserDAO with DatabaseContext {
   import schema.dbContext._
 
   override def getUser(login: String): Future[Option[User]] = {
-      run(users.filter(_.login == lift(login))).map {
+      run(users.filter(_.login.toLowerCase == lift(login.toLowerCase()))).map {
         _.headOption
       }
   }
