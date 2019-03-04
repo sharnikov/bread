@@ -12,7 +12,7 @@ object OrderStatus extends PostgreEnum {
 
   type Status = Value
 
-  val NEW, DONE, IN_PROGRESS, REJECTED, UNKNOWN = Value
+  val NEW, DONE, WAITING_FOR_CONFIRM, IN_PROGRESS, REJECTED, UNKNOWN = Value
 
   override def default(): OrderStatus.Value = UNKNOWN
 }

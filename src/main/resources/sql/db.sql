@@ -60,7 +60,7 @@ select g.name, i.quantity from GOODS as g JOIN ITEMS as i on i.good_id = g.id jo
 
 ---------------------------
 
-create type order_status AS ENUM ('NEW', 'DONE', 'IN_PROGRESS', 'REJECTED');
+create type order_status AS ENUM ('NEW', 'DONE', 'IN_PROGRESS', 'REJECTED', 'WAITING_FOR_CONFIRM');
 alter table ORDERS add column status order_status not null default 'NEW';
 
 --------------------------------------------
@@ -76,7 +76,5 @@ insert into USERS (login, name, secondname, password) values
 ('Vovan', 'Вовка', 'Нитуп', 'russia');
 
 -----------------------------------
-
-alter table ORDERS drop column creation_date;
 alter table ORDERS add column creation_date timestamp not null default current_timestamp;
 --------------
