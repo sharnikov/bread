@@ -1,10 +1,7 @@
 package ru.bread.services.external
 
-import java.util.Date
-import java.util.concurrent.ConcurrentHashMap
-
 import ru.bread.database.services.UserDAO
-import ru.bread.errors.AppError.VerboseServiceException
+import ru.bread.modules.AuthorizationModule.SessionStorage
 import ru.bread.services.internal.{EncryptService, FixedTimeProvider, SessionGenerator}
 import ru.bread.settings.config.TestSettings
 import utils.TestStuff
@@ -17,16 +14,17 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
     val userDAO = stub[UserDAO]
     val sessionGenerator = stub[SessionGenerator]
     val encryptService = stub[EncryptService]
-    val timeProvider = new FixedTimeProvider(time)
-    val sessions = stub[ConcurrentHashMap[String, Date]]
+    val sessions = stub[SessionStorage]
 
     (session.size _).when().returns(30)
+
+    def timeProvider() = new FixedTimeProvider(time)
 
     val authorizationService = new BasicAuthorizationService(
       userDAO,
       sessionGenerator,
       encryptService,
-      timeProvider,
+      timeProvider(),
       sessions
     )
   }
@@ -39,7 +37,7 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
       authorizationService.authorize(trueCredentials)
     ) shouldBe None
 
-    (sessions.put _).verify(sessionId, time).never()
+    (sessions.put _).verify(sessionId, sessionObj).never()
     (encryptService.encrypt _).verify(password).never()
   }
 
@@ -50,7 +48,7 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
     (sessionGenerator.generateSession _).when().returns(sessionId)
 
     await(authorizationService.authorize(falseCredentials)) shouldBe None
-    (sessions.put _).verify(sessionId, time).never()
+    (sessions.put _).verify(sessionId, sessionObj).never()
   }
 
   "authorize" should "put session in the map and return it" in new mocks {
@@ -60,6 +58,19 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
     (sessionGenerator.generateSession _).when().returns(sessionId)
 
     await(authorizationService.authorize(trueCredentials)) shouldBe Some(wrappedSessionId)
-    (sessions.put _).verify(sessionId, time).once()
+    (sessions.put _).verify(sessionId, sessionObj).once()
+  }
+
+  "userBySessionId" should "update valid session and return it" in new mocks {
+
+    override def timeProvider() = new FixedTimeProvider(time2)
+
+    (sessionGenerator.generateSession _).when().returns(sessionId)
+    (sessions.get _).when(*).returns(sessionObj)
+    (sessions.containsKey _).when(*).returns(true)
+
+    await(authorizationService.userBySessionId(sessionId)) shouldBe user
+
+    (sessions.computeIfPresent _).verify(sessionId, *).once()
   }
 }

@@ -16,9 +16,10 @@ trait OrdersService {
   def getAllGoods(): Future[List[Good]]
   def getGoodsByCategory(category: String): Future[List[Good]]
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
-  def addOrder(order: NewOrder): Future[ResponseWithId]
+  def addOrder(userId: Id, goodsPack: Seq[GoodsPack]): Future[ResponseWithId]
   def changeStatus(orderId: Id, status: Status): Future[Completed]
-  def addItemToOrder(newItem: NewItem): Future[Completed]
+  def addItemToOrder(userId: Id, newItem: Item): Future[Completed]
+  def removeItemFromOrder(userId: Id, item: Item): Future[Completed]
 }
 
 class OrdersServiceImpl(dao: OrdersDAO, timeProvider: TimeProvider) extends OrdersService with ServiceContext {
@@ -26,15 +27,15 @@ class OrdersServiceImpl(dao: OrdersDAO, timeProvider: TimeProvider) extends Orde
   override def getGoodsByCategory(category: String): Future[List[Good]] = dao.getGoodsByCategory(category)
   override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = dao.getOrderById(userId, orderId)
 
-  override def addOrder(newOrder: NewOrder): Future[ResponseWithId] = {
+  override def addOrder(userId: Id, goodsPack: Seq[GoodsPack]): Future[ResponseWithId] = {
     val order = Order(
       id = None,
-      userId = newOrder.userId,
+      userId = userId,
       status = OrderStatus.NEW,
       creationDate = timeProvider.currentTime
     )
 
-    val items = newOrder.packs.map(pack => Item(
+    val items = goodsPack.map(pack => Item(
       goodId = pack.goodId,
       orderId = None,
       quantity = pack.quantity
@@ -45,7 +46,12 @@ class OrdersServiceImpl(dao: OrdersDAO, timeProvider: TimeProvider) extends Orde
     )))
   }
 
-  override def changeStatus(orderId: Id, status: Status): Future[Completed] = dao.changeStatus(orderId, status)
+  override def changeStatus(orderId: Id, status: Status): Future[Completed] =
+    dao.changeStatus(orderId, status)
 
-  override def addItemToOrder(newItem: NewItem): Future[Completed] = dao.addItemToOrder(newItem.item, newItem.userId)
+  override def addItemToOrder(userId: Id, item: Item): Future[Completed] =
+    dao.addItemToOrder(userId, item)
+
+  override def removeItemFromOrder(userId: Id, item: Item): Future[Completed] =
+    dao.removeItemFromOrder(userId, item)
 }

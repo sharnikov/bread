@@ -1,16 +1,17 @@
 package ru.bread.settings.schedulers
 
 import java.util.Date
-import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
+import java.util.concurrent.TimeUnit
 
 import com.typesafe.scalalogging.LazyLogging
+import ru.bread.modules.AuthorizationModule.SessionStorage
 import ru.bread.settings.config.Settings
 
 trait ScheduledTaskManager {
   def start(): Unit
 }
 
-class SimpleScheduledTaskManager(sessions: ConcurrentHashMap[String, Date], settings: Settings)
+class SimpleScheduledTaskManager(sessions: SessionStorage, settings: Settings)
   extends ScheduledTaskManager with LazyLogging {
 
   private val scheduledExecutor = java.util.concurrent.Executors.newScheduledThreadPool(
@@ -27,8 +28,8 @@ class SimpleScheduledTaskManager(sessions: ConcurrentHashMap[String, Date], sett
     def cleanElements(sessionIds: java.util.Enumeration[String], currentDate: Date): Unit = {
       if (sessionIds.hasMoreElements) {
         val sessionId = sessionIds.nextElement()
-        val value = sessions.get(sessionId)
-        if (isTooOld(value, currentDate)) sessions.remove(sessionId)
+        val session = sessions.get(sessionId)
+        if (isTooOld(session.expireDate, currentDate)) sessions.remove(sessionId)
         cleanElements(sessionIds, currentDate)
       }
     }

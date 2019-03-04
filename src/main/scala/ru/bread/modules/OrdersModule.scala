@@ -1,10 +1,8 @@
 package ru.bread.modules
 
-import java.util.Date
-import java.util.concurrent.ConcurrentHashMap
-
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import ru.bread.database.Item
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database.services.OrdersDAOImpl
 import ru.bread.services.Domain.Id
@@ -15,7 +13,7 @@ import ru.bread.http.routes.RoutesUtils
 
 class OrdersModule(dbModule: DatabaseModule,
                    commonModule: CommonModule,
-                   sessions: ConcurrentHashMap[String, Date])
+                   authorizationModule: AuthorizationModule)
   extends ModuleWithRoutes with RoutesUtils {
 
   override def name(): String = "Orders"
@@ -28,7 +26,6 @@ class OrdersModule(dbModule: DatabaseModule,
   def routes(catalogService: OrdersService): Route =
     get {
       path("all_goods") {
-        logger.warn(sessions.toString)
         completeResult(catalogService.getAllGoods())
       } ~ path("goods_by_category") {
         parameters('category.as[String]) { category =>
@@ -40,17 +37,27 @@ class OrdersModule(dbModule: DatabaseModule,
         }
       }
     }~ post {
-      path("add_order") {
-        entity(as[NewOrder]) { order =>
-          completeResult(catalogService.addOrder(order))
-        }
-      } ~ path("change_status") {
-        parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
-          completeResult(catalogService.changeStatus(orderId, status))
-        }
-      } ~ path("add_item") {
-        entity(as[NewItem]) { newItem =>
-          completeResult(catalogService.addItemToOrder(newItem))
+      headerValueByName("sessionid") { headerValue =>
+
+        val user = authorizationModule.authorizationService.userBySessionId(headerValue)
+        logger.info(s"User ${user.id} was successfully authenticated")
+
+        path("add_order") {
+          entity(as[Seq[GoodsPack]]) { goodsPack =>
+            completeResult(catalogService.addOrder(user.id, goodsPack))
+          }
+        } ~ path("change_status") {
+          parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
+            completeResult(catalogService.changeStatus(orderId, status))
+          }
+        } ~ path("add_item") {
+          entity(as[Item]) { newItem =>
+            completeResult(catalogService.addItemToOrder(user.id, newItem))
+          }
+        }  ~ path("remove_item") {
+          entity(as[Item]) { newItem =>
+            completeResult(catalogService.removeItemFromOrder(user.id, newItem))
+          }
         }
       }
     }

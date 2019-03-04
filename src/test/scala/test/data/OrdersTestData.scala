@@ -45,11 +45,6 @@ object OrdersTestData {
     goodId = good2.id
   )
 
-  val newOrder = NewOrder(
-    userId = userId,
-    packs = List(goodPack, goodPack2)
-  )
-
   val order = Order(
     id = None,
     userId = userId,
@@ -73,6 +68,6 @@ object OrdersTestData {
 
   val itemWithId = item.copy(orderId = Some(orderId))
 
-  val newItem = NewItem(userId, itemWithId)
+  val listOfGoodsPack = Seq(goodPack, goodPack2)
 
 }

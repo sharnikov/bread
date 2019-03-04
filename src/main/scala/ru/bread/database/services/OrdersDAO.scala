@@ -1,5 +1,6 @@
 package ru.bread.database.services
 
+import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database._
 import ru.bread.database.settings.PostgresSchema
@@ -15,12 +16,13 @@ trait OrdersDAO {
   def getAllGoods(): Future[List[Good]]
   def getGoodsByCategory(category: String): Future[List[Good]]
   def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
-  def addOrder(order: Order, items: List[Item]): Future[Option[Id]]
+  def addOrder(order: Order, items: Seq[Item]): Future[Option[Id]]
   def changeStatus(orderId: Id, status: Status): Future[Completed]
-  def addItemToOrder(item: Item, userId: Id): Future[Completed]
+  def addItemToOrder(userId: Id, item: Item): Future[Completed]
+  def removeItemFromOrder(userId: Id, removeItem: Item): Future[Completed]
 }
 
-class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseContext {
+class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseContext with LazyLogging {
 
   import schema._
   import schema.dbContext._
@@ -53,7 +55,7 @@ class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseConte
       )
     }
 
-  override def addOrder(order: Order, items: List[Item]): Future[Option[Id]] = {
+  override def addOrder(order: Order, items: Seq[Item]): Future[Option[Id]] = {
 
     def addIdToItems(orderId: Option[Id]) = items.map(_.copy(orderId = orderId))
 
@@ -65,11 +67,12 @@ class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseConte
     }
   }
 
-  override def changeStatus(orderId: Id, status: Status): Future[Completed] = {
-    transaction( _ => run(schema.orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed))
-  }
+  override def changeStatus(orderId: Id, status: Status): Future[Completed] =
+    transaction { _ =>
+      run(schema.orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed)
+    }
 
-  override def addItemToOrder(newItem: Item, userId: Id): Future[Completed] = {
+  override def addItemToOrder(userId: Id, newItem: Item): Future[Completed] =
     transaction { _ =>
       for {
         orders <- run(schema.orders.filter(order =>
@@ -85,10 +88,36 @@ class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseConte
         })
         _ <- if (currentItems.nonEmpty) {
           val currentItem = currentItems.head
-          run(schema.items.update(_.quantity -> lift(currentItem.quantity + newItem.quantity)))
+          run(schema.items.filter{ item =>
+            val liftedNewItem = lift(newItem)
+            item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
+          }.update(_.quantity -> lift(currentItem.quantity + newItem.quantity)))
         } else run(schema.items.insert(lift(newItem)))
       } yield Completed
     }
-  }
-}
 
+  override def removeItemFromOrder(userId: Id, removeItem: Item): Future[Completed] =
+    transaction { _ =>
+      for {
+        currentItems <- run(schema.items.filter { item =>
+          val liftedNewItem = lift(removeItem)
+          item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
+        })
+        _ = currentItems.foreach { currentItem =>
+          if (currentItem.quantity - removeItem.quantity <= 0 )
+            run(schema.items.filter { item =>
+              val liftedNewItem = lift(removeItem)
+              item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
+            }.delete) else
+            run(schema.items.filter { item =>
+              val liftedNewItem = lift(removeItem)
+              item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
+            }.update(_.quantity -> lift(currentItem.quantity - removeItem.quantity)))
+        }
+        _ = if (currentItems.isEmpty) logger.warn(
+          s"There are no items with id = ${removeItem.goodId} for orderId = ${removeItem.orderId} and user = $userId"
+        )
+
+      } yield Completed
+    }
+}

@@ -5,6 +5,7 @@ import akka.http.scaladsl.server.directives.Credentials.Provided
 import test.data.CommonTestData._
 import ru.bread.services.{LogAndPass, SessionId}
 import ru.bread.database.{Role, User}
+import ru.bread.modules.AuthorizationModule.Session
 
 import scala.util.Random
 
@@ -28,7 +29,7 @@ object AuthTestData {
     Role.CLIENT
   )
 
-  val logAndPass = LogAndPass(login, password)
+  val sessionObj = Session(user, time)
 
   val basicHttpCredentials = BasicHttpCredentials(login, password)
 

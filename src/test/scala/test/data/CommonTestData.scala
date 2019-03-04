@@ -9,4 +9,5 @@ object CommonTestData {
   val userId2: Id = 2
 
   val time = new Date(1551173108000L)
+  val time2 = new Date(1551173408000L)
 }
