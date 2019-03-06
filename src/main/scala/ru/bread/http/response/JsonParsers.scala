@@ -15,7 +15,7 @@ object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport with TimeJs
 
   implicit val fullGoodpackFormat = jsonFormat2(FullGoodPack)
 
-  implicit val fullOrderFormat = jsonFormat4(FullOrder)
+  implicit val fullOrderFormat = jsonFormat5(FullOrder)
 
   implicit val goodsPackFormat = jsonFormat2(GoodsPack)
 

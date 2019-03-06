@@ -7,7 +7,7 @@ import ru.bread.database.settings.PostgresSchema
 import ru.bread.errors.AppError.DatabaseException
 import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
-import ru.bread.services.{FullGoodPack, FullOrder}
+import ru.bread.services.{FullGoodPack, FullOrder, OrderItems}
 import ru.bread.settings.schedulers.DatabaseContext
 
 import scala.concurrent.Future
@@ -15,7 +15,7 @@ import scala.concurrent.Future
 trait OrdersDAO {
   def getAllGoods(): Future[List[Good]]
   def getGoodsByCategory(category: String): Future[List[Good]]
-  def getOrderById(userId: Id, orderId: Id): Future[FullOrder]
+  def getOrderById(userId: Id, orderId: Id): Future[OrderItems]
   def addOrder(order: Order, items: Seq[Item]): Future[Option[Id]]
   def changeStatus(orderId: Id, status: Status): Future[Completed]
   def addItemToOrder(userId: Id, item: Item): Future[Completed]
@@ -32,10 +32,10 @@ class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseConte
   }
 
   override def getGoodsByCategory(category: String): Future[List[Good]] = {
-    run(schema.goods.filter(_.category != lift(category)))
+    run(schema.goods.filter(_.category == lift(category)))
   }
 
-  override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] =
+  override def getOrderById(userId: Id, orderId: Id): Future[OrderItems] =
     for {
       orders <- run(orders.filter(order => order.userId == lift(userId) && order.id.contains(lift(orderId))))
       order = orders.headOption.getOrElse(
@@ -47,11 +47,9 @@ class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseConte
           .map { case (item, good) => FullGoodPack(item.quantity, good) }
       )
     } yield {
-      FullOrder(
-        userId = userId,
-        id = orderId,
+      OrderItems(
         packs = goodsWithQuantity,
-        creationDate = order.creationDate
+        creationDate = order.creationDate,
       )
     }
 

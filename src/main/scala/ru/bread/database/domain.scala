@@ -21,7 +21,11 @@ object Role extends PostgreEnum {
 
   type Role = Value
 
-  val ADMIN, CLIENT, GOD, GHOST, TRUSTED_CLIENT = Value
+  val GHOST = Value(0)
+  val CLIENT = Value(1)
+  val TRUSTED_CLIENT = Value(2)
+  val ADMIN = Value(3)
+  val GOD = Value(4)
 
   override def default(): Role.Value = GHOST
 }

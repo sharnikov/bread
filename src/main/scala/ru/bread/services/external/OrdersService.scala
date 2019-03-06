@@ -25,7 +25,16 @@ trait OrdersService {
 class OrdersServiceImpl(dao: OrdersDAO, timeProvider: TimeProvider) extends OrdersService with ServiceContext {
   override def getAllGoods(): Future[List[Good]] = dao.getAllGoods()
   override def getGoodsByCategory(category: String): Future[List[Good]] = dao.getGoodsByCategory(category)
-  override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] = dao.getOrderById(userId, orderId)
+  override def getOrderById(userId: Id, orderId: Id): Future[FullOrder] =
+    dao.getOrderById(userId, orderId).map { orderItems =>
+      FullOrder(
+        userId = userId,
+        id = orderId,
+        packs = orderItems.packs,
+        creationDate = orderItems.creationDate,
+        totalPrice = orderItems.packs.map(pack => pack.good.price * pack.quantity).sum
+      )
+    }
 
   override def addOrder(userId: Id, goodsPack: Seq[GoodsPack]): Future[ResponseWithId] = {
     val order = Order(

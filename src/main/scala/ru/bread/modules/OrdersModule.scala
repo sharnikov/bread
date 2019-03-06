@@ -2,7 +2,7 @@ package ru.bread.modules
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import ru.bread.database.Item
+import ru.bread.database.{Item, Role}
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database.services.OrdersDAOImpl
 import ru.bread.services.Domain.Id
@@ -37,31 +37,35 @@ class OrdersModule(dbModule: DatabaseModule,
       }
     } ~ post {
       authWithToken { user =>
-        path("add_order") {
-          entity(as[Seq[GoodsPack]]) { goodsPack =>
-            completeResult(catalogService.addOrder(user.id, goodsPack))
+        authorize(user.role == Role.CLIENT) {
+          path("add_order") {
+            entity(as[Seq[GoodsPack]]) { goodsPack =>
+              completeResult(catalogService.addOrder(user.id, goodsPack))
+            }
+          } ~
+          path("add_item") {
+            entity(as[Item]) { newItem =>
+              completeResult(catalogService.addItemToOrder(user.id, newItem))
+            }
+          } ~
+          path("remove_item") {
+            entity(as[Item]) { newItem =>
+              completeResult(catalogService.removeItemFromOrder(user.id, newItem))
+            }
           }
         } ~
-        path("change_status") {
-          parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
-            completeResult(catalogService.changeStatus(orderId, status))
+        authorize(user.role == Role.CLIENT || user.role == Role.ADMIN) {
+          path("change_status") {
+              parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
+                completeResult(catalogService.changeStatus(orderId, status))
+              }
+            } ~
+          path("order_by_id") {
+              parameters('orderId.as[Id]) { orderId =>
+                completeResult(catalogService.getOrderById(user.id, orderId))
+              }
+            }
           }
-        } ~
-        path("add_item") {
-          entity(as[Item]) { newItem =>
-            completeResult(catalogService.addItemToOrder(user.id, newItem))
-          }
-        } ~
-        path("remove_item") {
-          entity(as[Item]) { newItem =>
-            completeResult(catalogService.removeItemFromOrder(user.id, newItem))
-          }
-        } ~
-        path("order_by_id") {
-          parameters('orderId.as[Id]) { orderId =>
-            completeResult(catalogService.getOrderById(user.id, orderId))
-          }
-        }
       }
     }
 }

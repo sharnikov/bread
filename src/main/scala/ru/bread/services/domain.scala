@@ -16,7 +16,14 @@ case class SessionId(id: String)
 
 case class FullGoodPack(quantity: Int, good: Good) extends Embedded
 
-case class FullOrder(userId: Id, id: Id, packs: List[FullGoodPack], creationDate: Date)
+case class FullOrder(userId: Id,
+                     id: Id,
+                     packs: Seq[FullGoodPack],
+                     creationDate: Date,
+                     totalPrice: Double)
+
+case class OrderItems(packs: Seq[FullGoodPack],
+                      creationDate: Date)
 
 case class GoodsPack(quantity: Int, goodId: Id) extends Embedded
 

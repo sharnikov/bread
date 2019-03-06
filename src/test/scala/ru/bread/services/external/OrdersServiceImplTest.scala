@@ -21,13 +21,18 @@ class OrdersServiceImplTest extends FlatSpecLike with Matchers with MockFactory 
   "addOrder" should "build order and items" in new mocks {
     (dao.addOrder _).when(order, items).returns(Some(orderId))
 
-    await(catalogService.addOrder(userId, Seq(goodPack, goodPack2))) shouldBe ResponseWithId(orderId)
+    await(catalogService.addOrder(userId, listOfGoodsPack)) shouldBe ResponseWithId(orderId)
   }
 
   "addOrder" should "throw an exception when dao returns no orderId" in new mocks {
     (dao.addOrder _).when(order, items).returns(None)
 
-    awaitFailed[DatabaseException](catalogService.addOrder(userId, Seq(goodPack, goodPack2))).getMessage shouldBe "Could not retrieve orderId"
+    awaitFailed[DatabaseException](catalogService.addOrder(userId, listOfGoodsPack)).getMessage shouldBe "Could not retrieve orderId"
   }
 
+  "getOrderById" should "build full order" in new mocks {
+    (dao.getOrderById _).when(userId, orderId).returns(orderItems)
+
+    await(catalogService.getOrderById(userId, orderId)) shouldBe fullOrder
+  }
 }

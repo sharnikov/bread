@@ -28,11 +28,19 @@ object OrdersTestData {
     good2
   )
 
+  val listOfFullGoodPacks = List(fullGoodPack, fullGoodPack2)
+
+  val orderItems = OrderItems(
+    packs = listOfFullGoodPacks,
+    creationDate = time
+  )
+
   val fullOrder = FullOrder(
     userId = userId,
     id = orderId,
-    packs = List(fullGoodPack, fullGoodPack2),
-    creationDate = time
+    packs = listOfFullGoodPacks,
+    creationDate = time,
+    totalPrice = 618
   )
 
   val goodPack = GoodsPack(
