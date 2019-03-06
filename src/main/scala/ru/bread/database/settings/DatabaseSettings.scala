@@ -13,8 +13,6 @@ import scala.concurrent.ExecutionContext
 
 class DatabaseSettings extends DatabaseContext {
 
-  type DbContext = PostgresAsyncContext[Escape]
-
   private val postgresConfig = PostgresConfig(ConfigFactory.load("db"), context)
 
   case class PostgresConfig(config: Config, executionContext: ExecutionContext)
@@ -27,5 +25,5 @@ class DatabaseSettings extends DatabaseContext {
       uriParser = URLParser
     )
 
-  val pgContext: DbContext = new PostgresAsyncContext(Escape, postgresConfig.pool)
+  val pgContext = new PostgresAsyncContext(Escape, postgresConfig.pool)
 }

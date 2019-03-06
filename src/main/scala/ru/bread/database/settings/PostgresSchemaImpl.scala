@@ -1,13 +1,15 @@
 package ru.bread.database.settings
 
-import io.getquill.context.async.SqlTypes
-import io.getquill.{Escape, PostgresAsyncContext}
+import com.github.mauricio.async.db.Connection
+import io.getquill.context.async.{AsyncContext, SqlTypes}
+import io.getquill.context.sql.idiom.SqlIdiom
+import io.getquill.NamingStrategy
 import org.postgresql.util.PGobject
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database.Role.Role
 import ru.bread.database._
 
-class PostgresSchema(val dbContext: PostgresAsyncContext[Escape]) {
+class PostgresSchemaImpl[D <: SqlIdiom, E <: NamingStrategy, C <: Connection](override val dbContext: AsyncContext[D, E, C]) extends Schema[D, E] {
 
   import dbContext._
 
@@ -34,27 +36,4 @@ class PostgresSchema(val dbContext: PostgresAsyncContext[Escape]) {
   implicit val roleDecoder: Decoder[Role] = makeDecoder(Role)
   implicit val roleEncoder: Encoder[Role] = makeEncoder(Role)
 
-
-  val goods = quote {
-    querySchema[Good]("goods")
-  }
-
-  val items = quote {
-    querySchema[Item]("items", _.quantity -> "quantity", _.goodId -> "good_id", _.orderId -> "order_id")
-  }
-
-  val orders = quote {
-    querySchema[Order]("orders", _.id -> "id", _.userId -> "user_id", _.status -> "status", _.creationDate -> "creation_date")
-  }
-
-  val users = quote {
-    querySchema[User]("users",
-      _.id -> "id",
-      _.login -> "login",
-      _.name -> "name",
-      _.secondName -> "secondname",
-      _.password -> "password",
-      _.role -> "role"
-    )
-  }
 }

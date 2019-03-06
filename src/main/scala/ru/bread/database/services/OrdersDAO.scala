@@ -1,9 +1,11 @@
 package ru.bread.database.services
 
+import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
 import com.typesafe.scalalogging.LazyLogging
+import io.getquill.{Escape, PostgresDialect}
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database._
-import ru.bread.database.settings.PostgresSchema
+import ru.bread.database.settings.PostgresSchemaImpl
 import ru.bread.errors.AppError.DatabaseException
 import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
@@ -22,7 +24,7 @@ trait OrdersDAO {
   def removeItemFromOrder(userId: Id, removeItem: Item): Future[Completed]
 }
 
-class OrdersDAOImpl(schema: PostgresSchema) extends OrdersDAO with DatabaseContext with LazyLogging {
+class OrdersDAOImpl(schema: PostgresSchemaImpl[PostgresDialect.type, Escape.type, PostgreSQLConnection]) extends OrdersDAO with DatabaseContext with LazyLogging {
 
   import schema._
   import schema.dbContext._
