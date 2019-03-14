@@ -9,5 +9,6 @@ class CommonModule(settings: Settings) extends Module {
   val timeProvider: TimeProvider = new SystemTimeProvider()
   val encryptService: EncryptService = new MD5EncryptService(settings)
   val sessionGenerator: SessionGenerator = new SessionGeneratorImpl(settings)
+  val SSLContextProducer: SSLContextProducer = new SimpleSSLContextProducer(settings)
 
 }

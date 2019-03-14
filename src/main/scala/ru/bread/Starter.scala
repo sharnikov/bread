@@ -9,7 +9,7 @@ import ru.bread.settings.schedulers.{MainContext, SimpleScheduledTaskManager}
 
 object Starter extends App with MainContext with LazyLogging {
 
-  val settings: Settings = new AppSettings(ConfigFactory.load("app.conf"))
+  val settings: Settings = new AppSettings(ConfigFactory.load())
   logger.info("Config initialized")
 
   val commonModule = new CommonModule(settings)
@@ -17,11 +17,11 @@ object Starter extends App with MainContext with LazyLogging {
   val authorizationModule = new AuthorizationModule(dbModule, commonModule, settings)
   val ordersModule = new OrdersModule(dbModule, commonModule, authorizationModule)
 
-  val schedule = new SimpleScheduledTaskManager(authorizationModule.sessions, settings)
+  val schedule = new SimpleScheduledTaskManager(authorizationModule.sessions, commonModule.timeProvider, settings)
   schedule.start()
 
   val routesBuilder = new RoutesBuilderImpl(Seq(authorizationModule, ordersModule))
 
-  val routesModule = new RoutesModule(settings, routesBuilder.routes())
+  val routesModule = new RoutesModule(commonModule, routesBuilder.routes(), settings)
   logger.info("App started")
 }

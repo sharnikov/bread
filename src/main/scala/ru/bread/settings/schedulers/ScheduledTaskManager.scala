@@ -5,13 +5,14 @@ import java.util.concurrent.TimeUnit
 
 import com.typesafe.scalalogging.LazyLogging
 import ru.bread.modules.AuthorizationModule.SessionStorage
+import ru.bread.services.internal.TimeProvider
 import ru.bread.settings.config.Settings
 
 trait ScheduledTaskManager {
   def start(): Unit
 }
 
-class SimpleScheduledTaskManager(sessions: SessionStorage, settings: Settings)
+class SimpleScheduledTaskManager(sessions: SessionStorage, timeProvider: TimeProvider, settings: Settings)
   extends ScheduledTaskManager with LazyLogging {
 
   private val scheduledExecutor = java.util.concurrent.Executors.newScheduledThreadPool(
@@ -35,8 +36,7 @@ class SimpleScheduledTaskManager(sessions: SessionStorage, settings: Settings)
     }
 
     override def run(): Unit = {
-      val currentDate = new Date(System.currentTimeMillis())
-      cleanElements(sessions.keys(), currentDate)
+      cleanElements(sessions.keys(), timeProvider.currentTime)
     }
   }
 

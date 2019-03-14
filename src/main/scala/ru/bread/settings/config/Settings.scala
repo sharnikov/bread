@@ -10,6 +10,7 @@ trait Settings {
   def sessionSettings(): Session
   def schedulerSettings(): Scheduler
   def commonSettings(): Common
+  def sslSettings(): SSL
 }
 
 class AppSettings(config: Config) extends Settings {
@@ -17,6 +18,7 @@ class AppSettings(config: Config) extends Settings {
   override def sessionSettings(): Session = new SessionSettings(config.as[Config]("session"))
   override def schedulerSettings(): Scheduler = new SchedulerSettings(config.as[Config]("scheduler"))
   override def commonSettings(): Common = new CommonSettings(config.as[Config]("common"))
+  override def sslSettings(): SSL = new SSLSettings(config.as[Config]("ssl"))
 }
 
 object Settings {

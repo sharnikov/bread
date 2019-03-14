@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Route
 import akka.stream.ActorMaterializer
 import ru.bread.settings.config.Settings
 
-class RoutesModule(settings: Settings, routes: Route) extends Module {
+class RoutesModule(commonModule: CommonModule, routes: Route, settings: Settings) extends Module {
   override def name(): String = "Routes"
 
   implicit val system: ActorSystem = ActorSystem("bread")
@@ -14,5 +14,10 @@ class RoutesModule(settings: Settings, routes: Route) extends Module {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
   logger.info("ActorMaterializer initialized")
 
-  Http().bindAndHandle(routes, settings.akkaSettings().host, settings.akkaSettings().port)
+  Http().bindAndHandle(
+    routes,
+    settings.akkaSettings().host,
+    settings.akkaSettings().port,
+    connectionContext = commonModule.SSLContextProducer.getConnectionContext()
+  )
 }
