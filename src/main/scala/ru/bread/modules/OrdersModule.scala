@@ -5,11 +5,11 @@ import akka.http.scaladsl.server.Route
 import ru.bread.database.{Item, Role}
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database.services.OrdersDAOImpl
+import ru.bread.services.external.{AuthorizationService, OrdersServiceImpl}
 import ru.bread.services.Domain.Id
 import ru.bread.services._
-import ru.bread.services.external.{AuthorizationService, OrdersService, OrdersServiceImpl}
-import ru.bread.http.response.JsonParsers._
 import ru.bread.http.routes.{RoutesAuthUtils, RoutesUtils}
+import ru.bread.http.response.JsonParsers._
 
 class OrdersModule(dbModule: DatabaseModule,
                    commonModule: CommonModule,

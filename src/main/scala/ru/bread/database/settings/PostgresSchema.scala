@@ -9,18 +9,18 @@ import ru.bread.database.OrderStatus.Status
 import ru.bread.database.Role.Role
 import ru.bread.database._
 
-class PostgresSchemaImpl[D <: SqlIdiom, E <: NamingStrategy, C <: Connection](override val dbContext: AsyncContext[D, E, C]) extends Schema[D, E] {
+class PostgresSchema[D <: SqlIdiom, E <: NamingStrategy, C <: Connection](override val dbContext: AsyncContext[D, E, C]) extends Schema[D, E] {
 
   import dbContext._
 
-  private def makeDecoder[T <: PostgresEnum](enum: T): Decoder[enum.Value] = decoder(
+  private def makeDecoder[T <: DbEnum](enum: T): Decoder[enum.Value] = decoder(
     {
-      case value =>  enum.withNameWithDefault(value.toString)
+      case value: String =>  enum.withNameWithDefault(value)
     },
     SqlTypes.VARCHAR
   )
 
-  private def makeEncoder[T <: PostgresEnum](enum: T): Encoder[enum.Value] = encoder(
+  private def makeEncoder[T <: DbEnum](enum: T): Encoder[enum.Value] = encoder(
     value => {
       val pgObject = new PGobject()
       pgObject.setType("TEXT")

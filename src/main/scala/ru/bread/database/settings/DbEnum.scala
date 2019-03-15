@@ -2,7 +2,7 @@ package ru.bread.database.settings
 
 import akka.http.scaladsl.unmarshalling.Unmarshaller
 
-trait PostgresEnum extends Enumeration {
+trait DbEnum extends Enumeration {
 
   def withNameOpt(s: String): Option[Value] = values.find(_.toString == s)
 
