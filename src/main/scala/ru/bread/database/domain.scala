@@ -5,10 +5,10 @@ import java.util.Date
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database.Role.Role
 import io.getquill.Embedded
-import ru.bread.database.settings.PostgreEnum
+import ru.bread.database.settings.PostgresEnum
 import ru.bread.services.Domain.Id
 
-object OrderStatus extends PostgreEnum {
+object OrderStatus extends PostgresEnum {
 
   type Status = Value
 
@@ -17,7 +17,7 @@ object OrderStatus extends PostgreEnum {
   override def default(): OrderStatus.Value = UNKNOWN
 }
 
-object Role extends PostgreEnum {
+object Role extends PostgresEnum {
 
   type Role = Value
 

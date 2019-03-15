@@ -13,14 +13,14 @@ class PostgresSchemaImpl[D <: SqlIdiom, E <: NamingStrategy, C <: Connection](ov
 
   import dbContext._
 
-  private def makeDecoder[T <: PostgreEnum](enum: T): Decoder[enum.Value] = decoder(
+  private def makeDecoder[T <: PostgresEnum](enum: T): Decoder[enum.Value] = decoder(
     {
       case value =>  enum.withNameWithDefault(value.toString)
     },
     SqlTypes.VARCHAR
   )
 
-  private def makeEncoder[T <: PostgreEnum](enum: T): Encoder[enum.Value] = encoder(
+  private def makeEncoder[T <: PostgresEnum](enum: T): Encoder[enum.Value] = encoder(
     value => {
       val pgObject = new PGobject()
       pgObject.setType("TEXT")

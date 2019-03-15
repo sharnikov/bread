@@ -9,7 +9,7 @@ import ru.bread.database.settings.PostgresSchemaImpl
 import ru.bread.errors.AppError.DatabaseException
 import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
-import ru.bread.services.{FullGoodPack, FullOrder, OrderItems}
+import ru.bread.services.{FullGoodPack, OrderItems}
 import ru.bread.settings.schedulers.DatabaseContext
 
 import scala.concurrent.Future
