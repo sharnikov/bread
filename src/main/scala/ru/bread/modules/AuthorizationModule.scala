@@ -31,12 +31,7 @@ class AuthorizationModule(dbModule: DatabaseModule,
     sessions = sessions
   )
 
-  def getUserDao()= userDao
-  def getAuthorizationService() = authorizationService
-
-  override def routes(): Route = routes(authorizationService)
-
-  def routes(authorizationService: AuthorizationService) =
+  override def routes() =
     authenticateBasicAsync("ordersAuth", authorizationService.authorize) { sessionId =>
         post {
           path("sign_up") {

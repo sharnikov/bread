@@ -23,9 +23,7 @@ class OrdersModule(dbModule: DatabaseModule,
 
   override def authService(): AuthorizationService = authorizationModule.authorizationService
 
-  override def routes(): Route = routes(catalogService)
-
-  def routes(catalogService: OrdersService): Route =
+  override def routes(): Route =
     get {
       path("all_goods") {
         completeResult(catalogService.getAllGoods())
