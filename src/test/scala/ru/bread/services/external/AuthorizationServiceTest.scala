@@ -1,6 +1,7 @@
 package ru.bread.services.external
 
 import ru.bread.database.services.UserDAO
+import ru.bread.errors.AppError.AuthorizationException
 import ru.bread.modules.AuthorizationModule.SessionStorage
 import ru.bread.services.internal.{EncryptService, FixedTimeProvider, SessionGenerator}
 import ru.bread.settings.config.TestSettings
@@ -33,9 +34,9 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
 
     (userDAO.getUser _).when(login).returns(None)
 
-    await(
+    awaitFailed[AuthorizationException](
       authorizationService.authorize(trueCredentials)
-    ) shouldBe None
+    ).getMessage shouldBe "Login or password is incorrect"
 
     (sessions.put _).verify(sessionId, sessionObj).never()
     (encryptService.encrypt _).verify(password).never()
@@ -47,7 +48,9 @@ class AuthorizationServiceTest extends TestStuff with TestSettings {
     (encryptService.encrypt _).when(password).returns(encryptedPassword)
     (sessionGenerator.generateSession _).when().returns(sessionId)
 
-    await(authorizationService.authorize(falseCredentials)) shouldBe None
+    awaitFailed[AuthorizationException](
+      authorizationService.authorize(falseCredentials)
+    ).getMessage shouldBe "Login or password is incorrect"
     (sessions.put _).verify(sessionId, sessionObj).never()
   }
 

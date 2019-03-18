@@ -3,7 +3,7 @@ package ru.bread.services.external
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpecLike, Matchers}
 import ru.bread.database.services.OrdersDAO
-import ru.bread.errors.AppError.DatabaseException
+import ru.bread.errors.AppError.DatabaseDataNotFoundException
 import ru.bread.services.ResponseWithId
 import ru.bread.services.internal.FixedTimeProvider
 import test.data.OrdersTestData._
@@ -27,7 +27,7 @@ class OrdersServiceImplTest extends FlatSpecLike with Matchers with MockFactory 
   "addOrder" should "throw an exception when dao returns no orderId" in new mocks {
     (dao.addOrder _).when(order, items).returns(None)
 
-    awaitFailed[DatabaseException](catalogService.addOrder(userId, listOfGoodsPack)).getMessage shouldBe "Could not retrieve orderId"
+    awaitFailed[DatabaseDataNotFoundException](catalogService.addOrder(userId, listOfGoodsPack)).getMessage shouldBe "Could not retrieve orderId"
   }
 
   "getOrderById" should "build full order" in new mocks {

@@ -3,7 +3,7 @@ package ru.bread.services.external
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database._
 import ru.bread.database.services.OrdersDAO
-import ru.bread.errors.AppError.DatabaseException
+import ru.bread.errors.AppError.DatabaseDataNotFoundException
 import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
 import ru.bread.services._
@@ -51,7 +51,7 @@ class OrdersServiceImpl(dao: OrdersDAO, timeProvider: TimeProvider) extends Orde
     ))
 
     dao.addOrder(order, items).map(orderId => ResponseWithId(orderId.getOrElse(
-      throw new DatabaseException("Could not retrieve orderId")
+      throw new DatabaseDataNotFoundException("Could not retrieve orderId")
     )))
   }
 

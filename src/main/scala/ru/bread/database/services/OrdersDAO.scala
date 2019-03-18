@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database._
 import ru.bread.database.settings.DatabaseSettings.PgSchema
-import ru.bread.errors.AppError.DatabaseException
+import ru.bread.errors.AppError.DatabaseDataNotFoundException
 import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
 import ru.bread.services.{FullGoodPack, OrderItems}
@@ -40,7 +40,7 @@ class OrdersDAOImpl(schema: PgSchema) extends OrdersDAO with DatabaseContext wit
     for {
       orders <- run(orders.filter(order => order.userId == lift(userId) && order.id.contains(lift(orderId))))
       order = orders.headOption.getOrElse(
-        throw new DatabaseException(s"There is no order with such an orderId = $orderId")
+        throw new DatabaseDataNotFoundException(s"There is no order with such an orderId = $orderId")
       )
       goodsWithQuantity <- run(
         items.filter(item =>  item.orderId.contains(lift(orderId)))
@@ -78,9 +78,9 @@ class OrdersDAOImpl(schema: PgSchema) extends OrdersDAO with DatabaseContext wit
           lift(newItem).orderId.exists(order.id.contains) && lift(userId) == order.userId)
         )
         order = orders.headOption
-        _ = if (order.isEmpty) throw new DatabaseException(s"There is no such an order")
+        _ = if (order.isEmpty) throw new DatabaseDataNotFoundException(s"There is no such an order")
         _ = if (order.exists(_.status != OrderStatus.NEW))
-          throw new DatabaseException(s"Order status is ${orders.headOption.map(_.status)}, but must be NEW")
+          throw new DatabaseDataNotFoundException(s"Order status is ${orders.headOption.map(_.status)}, but must be NEW")
         currentItems <- run(schema.items.filter { item =>
           val liftedNewItem = lift(newItem)
           item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)

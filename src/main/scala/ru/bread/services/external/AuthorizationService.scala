@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.directives.Credentials.Provided
 import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.User
 import ru.bread.database.services.UserDAO
-import ru.bread.errors.AppError.VerboseServiceException
+import ru.bread.errors.AppError.{AuthorizationException, VerboseServiceException}
 import ru.bread.errors.ErrorCode
 import ru.bread.modules.AuthorizationModule.{Session, SessionStorage}
 import ru.bread.services.SessionId
@@ -30,21 +30,30 @@ class BasicAuthorizationService(userDAO: UserDAO,
     credential match {
       case cred @ Provided(login) =>
         userDAO.getUser(login).map { userOpt =>
-          userOpt
-            .filter(user => cred.verify(user.password, encryptService.encrypt))
-            .map { user =>
-              logger.info(s"User with login = $login was authorized")
-              val session = Session(
-                user = user,
-                expireDate = timeProvider.currentTime
-              )
-              SessionId(getSessionId(session))
-            }
+          val sessionId = extractSessionId(cred, login, userOpt)
+          if (sessionId.isEmpty) {
+            logger.error(s"Auth failed for user with login = $login")
+            throw new AuthorizationException("Login or password is incorrect")
+          }
+          sessionId
         }
       case _ =>
-        logger.info(s"No credentials request")
+        logger.warn(s"No credentials request")
         Future.successful(None)
     }
+  }
+
+  private def extractSessionId(cred: Credentials.Provided, login: String, userOpt: Option[User]) = {
+    userOpt
+      .filter(user => cred.verify(user.password, encryptService.encrypt))
+      .map { user =>
+        logger.info(s"User with login = $login was authorized")
+        val session = Session(
+          user = user,
+          expireDate = timeProvider.currentTime
+        )
+        SessionId(getSessionId(session))
+      }
   }
 
   private def getSessionId(session: Session): String = {
