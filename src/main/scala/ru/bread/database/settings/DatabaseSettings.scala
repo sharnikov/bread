@@ -7,6 +7,7 @@ import com.github.mauricio.async.db.postgresql.util.URLParser
 import com.typesafe.config.{Config, ConfigFactory}
 import io.getquill.context.async.AsyncContextConfig
 import io.getquill.{Escape, PostgresAsyncContext, PostgresDialect}
+import ru.bread.database.schema.{PostgresSchema, Schema}
 import ru.bread.database.settings.DatabaseSettings.PostgresConfig
 import ru.bread.settings.schedulers.DatabaseContext
 
@@ -20,6 +21,7 @@ class DatabaseSettings extends DatabaseContext {
 }
 
 object DatabaseSettings {
+
   case class PostgresConfig(config: Config, executionContext: ExecutionContext)
     extends AsyncContextConfig[PostgreSQLConnection](
       config = config,
@@ -30,5 +32,6 @@ object DatabaseSettings {
       uriParser = URLParser
     )
 
-  type PgSchema = PostgresSchema[PostgresDialect.type, Escape.type, PostgreSQLConnection]
+  type PgSchema = Schema[PostgresDialect.type, Escape.type]
+  type PgAsyncSchema = PostgresSchema[PostgresDialect.type, Escape.type, PostgreSQLConnection]
 }

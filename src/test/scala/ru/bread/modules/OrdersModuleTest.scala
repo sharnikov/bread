@@ -2,7 +2,7 @@
 //
 //import utils.TestStuff
 //import akka.http.scaladsl.model.StatusCodes
-//import ru.bread.database.settings.PostgresSchema
+//import ru.bread.database.schema.PostgresSchema
 //import ru.bread.database.{Good, OrderStatus}
 //import ru.bread.services.{FullOrder, ResponseWithId}
 //import ru.bread.http.response.JsonParsers._

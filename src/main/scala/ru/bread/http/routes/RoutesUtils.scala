@@ -20,5 +20,4 @@ trait RoutesUtils extends LazyLogging {
       case Failure(exception) => throw exception
     }
   }
-
 }

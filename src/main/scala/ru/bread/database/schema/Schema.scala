@@ -1,7 +1,10 @@
-package ru.bread.database.settings
+package ru.bread.database.schema
 
-import io.getquill.context.Context
+import com.github.mauricio.async.db.Connection
 import io.getquill.NamingStrategy
+import io.getquill.context.Context
+import io.getquill.context.async.AsyncContext
+import io.getquill.context.sql.idiom.SqlIdiom
 import io.getquill.idiom.Idiom
 import ru.bread.database._
 
@@ -43,4 +46,8 @@ trait Schema[D <: Idiom, N <: NamingStrategy] {
     )
   }
 
+}
+
+trait AsyncSchema[D <: SqlIdiom, N <: NamingStrategy, C <: Connection] extends Schema[D, N] {
+  override val dbContext: AsyncContext[D, N, C]
 }

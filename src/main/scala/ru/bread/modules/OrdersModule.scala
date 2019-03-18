@@ -18,7 +18,7 @@ class OrdersModule(dbModule: DatabaseModule,
 
   override def name(): String = "Orders"
 
-  val dao = new OrdersDAOImpl(dbModule.dbSchema)
+  val dao = new OrdersDAOImpl(dbModule.schemaAssessor)
   val catalogService = new OrdersServiceImpl(dao, commonModule.timeProvider)
 
   override def authService(): AuthorizationService = authorizationModule.authorizationService

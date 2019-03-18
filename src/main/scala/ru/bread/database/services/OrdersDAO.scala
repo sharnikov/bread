@@ -4,7 +4,8 @@ import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
 import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database._
-import ru.bread.database.settings.DatabaseSettings.PgSchema
+import ru.bread.database.schema.PostgresSchemaAssessor
+import ru.bread.database.settings.DatabaseSettings.PgAsyncSchema
 import ru.bread.errors.AppError.DatabaseDataNotFoundException
 import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id
@@ -23,17 +24,17 @@ trait OrdersDAO {
   def removeItemFromOrder(userId: Id, removeItem: Item): Future[Completed]
 }
 
-class OrdersDAOImpl(schema: PgSchema) extends OrdersDAO with DatabaseContext with LazyLogging {
+class OrdersDAOImpl(db: PostgresSchemaAssessor) extends OrdersDAO with DatabaseContext with LazyLogging {
 
-  import schema._
-  import schema.dbContext._
+  import db.getAsyncSchema._
+  import db.getAsyncSchema.dbContext._
 
   override def getAllGoods(): Future[List[Good]] = {
-    run(schema.goods)
+    run(goods)
   }
 
   override def getGoodsByCategory(category: String): Future[List[Good]] = {
-    run(schema.goods.filter(_.category == lift(category)))
+    run(goods.filter(_.category == lift(category)))
   }
 
   override def getOrderById(userId: Id, orderId: Id): Future[OrderItems] =
@@ -54,61 +55,61 @@ class OrdersDAOImpl(schema: PgSchema) extends OrdersDAO with DatabaseContext wit
       )
     }
 
-  override def addOrder(order: Order, items: Seq[Item]): Future[Option[Id]] = {
+  override def addOrder(order: Order, orderItems: Seq[Item]): Future[Option[Id]] = {
 
-    def addIdToItems(orderId: Option[Id]) = items.map(_.copy(orderId = orderId))
+    def addIdToItems(orderId: Option[Id]) = orderItems.map(_.copy(orderId = orderId))
 
     transaction { _ =>
       for {
-        orderId <- run(schema.orders.insert(lift(order)).returning(_.id))
-        _ <- run(liftQuery(addIdToItems(orderId)).foreach(item => schema.items.insert(item)))
+        orderId <- run(orders.insert(lift(order)).returning(_.id))
+        _ <- run(liftQuery(addIdToItems(orderId)).foreach(item => items.insert(item)))
       } yield orderId
     }
   }
 
   override def changeStatus(orderId: Id, status: Status): Future[Completed] =
     transaction { _ =>
-      run(schema.orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed)
+      run(orders.filter(_.id.contains(lift(orderId))).update(_.status -> lift(status))).map(_ => Completed)
     }
 
   override def addItemToOrder(userId: Id, newItem: Item): Future[Completed] =
     transaction { _ =>
       for {
-        orders <- run(schema.orders.filter(order =>
+        orders <- run(orders.filter(order =>
           lift(newItem).orderId.exists(order.id.contains) && lift(userId) == order.userId)
         )
         order = orders.headOption
         _ = if (order.isEmpty) throw new DatabaseDataNotFoundException(s"There is no such an order")
         _ = if (order.exists(_.status != OrderStatus.NEW))
           throw new DatabaseDataNotFoundException(s"Order status is ${orders.headOption.map(_.status)}, but must be NEW")
-        currentItems <- run(schema.items.filter { item =>
+        currentItems <- run(items.filter { item =>
           val liftedNewItem = lift(newItem)
           item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
         })
         _ <- if (currentItems.nonEmpty) {
           val currentItem = currentItems.head
-          run(schema.items.filter{ item =>
+          run(items.filter{ item =>
             val liftedNewItem = lift(newItem)
             item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
           }.update(_.quantity -> lift(currentItem.quantity + newItem.quantity)))
-        } else run(schema.items.insert(lift(newItem)))
+        } else run(items.insert(lift(newItem)))
       } yield Completed
     }
 
   override def removeItemFromOrder(userId: Id, removeItem: Item): Future[Completed] =
     transaction { _ =>
       for {
-        currentItems <- run(schema.items.filter { item =>
+        currentItems <- run(items.filter { item =>
           val liftedNewItem = lift(removeItem)
           item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
         })
         _ = currentItems.foreach { currentItem =>
           if (currentItem.quantity - removeItem.quantity <= 0 )
-            run(schema.items.filter { item =>
+            run(items.filter { item =>
               val liftedNewItem = lift(removeItem)
               item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
             }.delete) else
-            run(schema.items.filter { item =>
+            run(items.filter { item =>
               val liftedNewItem = lift(removeItem)
               item.goodId == liftedNewItem.goodId && item.orderId.exists(liftedNewItem.orderId.contains)
             }.update(_.quantity -> lift(currentItem.quantity - removeItem.quantity)))

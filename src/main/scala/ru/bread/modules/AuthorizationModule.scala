@@ -4,7 +4,6 @@ import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.User
 import ru.bread.database.services.{UserDAO, UserDAOImpl}
@@ -22,7 +21,7 @@ class AuthorizationModule(dbModule: DatabaseModule,
 
   val sessions: SessionStorage = new ConcurrentHashMap[String, Session]()
 
-  val userDao: UserDAO = new UserDAOImpl(dbModule.dbSchema)
+  val userDao: UserDAO = new UserDAOImpl(dbModule.schemaAssessor)
   val authorizationService: AuthorizationService = new BasicAuthorizationService(
     userDAO = userDao,
     sessionGenerator = commonModule.sessionGenerator,
