@@ -45,7 +45,6 @@ trait Schema[D <: Idiom, N <: NamingStrategy] {
       _.role -> "role"
     )
   }
-
 }
 
 trait AsyncSchema[D <: SqlIdiom, N <: NamingStrategy, C <: Connection] extends Schema[D, N] {

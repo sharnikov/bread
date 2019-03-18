@@ -4,7 +4,7 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
 
   private val akkaVersion = "10.1.7"
   private val jacksonVersion = "2.9.6"
-  private val quillVersion = "2.6.0"
+  private val quillVersion = "3.1.0"
   private val akkaStreamsVersion = "2.5.19"
 
   val logs = Seq(
