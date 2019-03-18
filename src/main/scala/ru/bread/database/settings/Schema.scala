@@ -16,11 +16,20 @@ trait Schema[D <: Idiom, N <: NamingStrategy] {
   }
 
   val items = quote {
-    querySchema[Item]("items", _.quantity -> "quantity", _.goodId -> "good_id", _.orderId -> "order_id")
+    querySchema[Item]("items",
+      _.quantity -> "quantity",
+      _.goodId -> "good_id",
+      _.orderId -> "order_id"
+    )
   }
 
   val orders = quote {
-    querySchema[Order]("orders", _.id -> "id", _.userId -> "user_id", _.status -> "status", _.creationDate -> "creation_date")
+    querySchema[Order]("orders",
+      _.id -> "id",
+      _.userId -> "user_id",
+      _.status -> "status",
+      _.creationDate -> "creation_date"
+    )
   }
 
   val users = quote {
