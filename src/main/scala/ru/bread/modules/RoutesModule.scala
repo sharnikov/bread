@@ -16,8 +16,8 @@ class RoutesModule(commonModule: CommonModule, routes: Route, settings: Settings
 
   Http().bindAndHandle(
     routes,
-    settings.akkaSettings().host,
-    settings.akkaSettings().port,
+    settings.akkaHttpSettings().host,
+    settings.akkaHttpSettings().port,
     connectionContext = commonModule.SSLContextProducer.getConnectionContext()
   )
 }

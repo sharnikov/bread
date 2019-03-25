@@ -17,7 +17,9 @@ trait RoutesUtils extends LazyLogging {
       case Success(info) =>
         logger.info("Successful result = {}", info)
         complete(success(info))
-      case Failure(exception) => throw exception
+      case Failure(exception) =>
+        logger.warn("Failed result result = {}", exception)
+        throw exception
     }
   }
 }

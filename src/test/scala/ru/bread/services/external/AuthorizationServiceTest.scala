@@ -3,7 +3,8 @@ package ru.bread.services.external
 import ru.bread.database.services.UserDAO
 import ru.bread.errors.AppError.AuthorizationException
 import ru.bread.modules.AuthorizationModule.SessionStorage
-import ru.bread.services.internal.{EncryptService, FixedTimeProvider, SessionGenerator}
+import ru.bread.services.internal.FixedTimeProvider
+import ru.bread.services.security.{EncryptService, SessionGenerator}
 import ru.bread.settings.config.TestSettings
 import utils.TestStuff
 import test.data.CommonTestData._

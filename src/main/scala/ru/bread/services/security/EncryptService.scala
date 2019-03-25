@@ -1,4 +1,4 @@
-package ru.bread.services.internal
+package ru.bread.services.security
 
 import org.apache.commons.codec.digest.DigestUtils
 import ru.bread.settings.config.Settings

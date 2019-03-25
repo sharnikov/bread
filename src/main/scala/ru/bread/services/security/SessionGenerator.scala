@@ -1,4 +1,4 @@
-package ru.bread.services.internal
+package ru.bread.services.security
 
 import java.security.SecureRandom
 

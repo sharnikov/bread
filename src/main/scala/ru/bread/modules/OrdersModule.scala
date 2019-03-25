@@ -1,5 +1,6 @@
 package ru.bread.modules
 
+import akka.http.scaladsl.server.directives.CachingDirectives._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import ru.bread.database.{Item, Role}
@@ -11,12 +12,15 @@ import ru.bread.services._
 import ru.bread.http.routes.{RoutesAuthUtils, RoutesUtils}
 import ru.bread.http.response.JsonParsers._
 
+
 class OrdersModule(dbModule: DatabaseModule,
                    commonModule: CommonModule,
                    authorizationModule: AuthorizationModule)
   extends ModuleWithRoutes with RoutesUtils with RoutesAuthUtils {
 
   override def name(): String = "Orders"
+
+  import commonModule.cacheService._
 
   val dao = new OrdersDAOImpl(dbModule.schemaAssessor)
   val catalogService = new OrdersServiceImpl(dao, commonModule.timeProvider)
@@ -25,45 +29,52 @@ class OrdersModule(dbModule: DatabaseModule,
 
   override def routes(): Route =
     get {
-      path("all_goods") {
-        completeResult(catalogService.getAllGoods())
-      } ~
-      path("goods_by_category") {
-        parameters('category.as[String]) { category =>
-          completeResult(catalogService.getGoodsByCategory(category))
+      cacheRouteByUrl {
+        path("all_goods") {
+          completeResult(catalogService.getAllGoods())
+        } ~
+        path("goods_by_category") {
+          parameters('category.as[String]) { category =>
+            completeResult(catalogService.getGoodsByCategory(category))
+          }
         }
       }
-    } ~ post {
+    } ~
+    post {
       authWithToken { user =>
-        authorize(user.role == Role.CLIENT) {
-          path("add_order") {
-            entity(as[Seq[GoodsPack]]) { goodsPack =>
-              completeResult(catalogService.addOrder(user.id, goodsPack))
-            }
-          } ~
-          path("add_item") {
-            entity(as[Item]) { newItem =>
-              completeResult(catalogService.addItemToOrder(user.id, newItem))
-            }
-          } ~
-          path("remove_item") {
-            entity(as[Item]) { newItem =>
-              completeResult(catalogService.removeItemFromOrder(user.id, newItem))
-            }
-          }
-        } ~
-        authorize(user.role == Role.CLIENT || user.role == Role.ADMIN) {
-          path("change_status") {
-              parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
-                completeResult(catalogService.changeStatus(orderId, status))
+        invalidateByUser(user) {
+          authorize(user.role == Role.CLIENT) {
+            path("add_order") {
+              entity(as[Seq[GoodsPack]]) { goodsPack =>
+                completeResult(catalogService.addOrder(user.id, goodsPack))
               }
             } ~
-          path("order_by_id") {
-              parameters('orderId.as[Id]) { orderId =>
-                completeResult(catalogService.getOrderById(user.id, orderId))
+            path("add_item") {
+              entity(as[Item]) { newItem =>
+                completeResult(catalogService.addItemToOrder(user.id, newItem))
+              }
+            } ~
+            path("remove_item") {
+              entity(as[Item]) { newItem =>
+                completeResult(catalogService.removeItemFromOrder(user.id, newItem))
               }
             }
+          } ~
+          authorize(user.role == Role.CLIENT || user.role == Role.ADMIN) {
+            path("change_status") {
+                parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
+                  completeResult(catalogService.changeStatus(orderId, status))
+                }
+              }
           }
+        } ~
+        cacheRouteByUser(user) {
+          path("order_by_id") {
+            parameters('orderId.as[Id]) { orderId =>
+              completeResult(catalogService.getOrderById(user.id, orderId))
+            }
+          }
+        }
       }
     }
 }

@@ -9,7 +9,8 @@ import ru.bread.errors.AppError.{AuthorizationException, VerboseServiceException
 import ru.bread.errors.ErrorCode
 import ru.bread.modules.AuthorizationModule.{Session, SessionStorage}
 import ru.bread.services.SessionId
-import ru.bread.services.internal.{EncryptService, SessionGenerator, TimeProvider}
+import ru.bread.services.internal.TimeProvider
+import ru.bread.services.security.{EncryptService, SessionGenerator}
 import ru.bread.settings.schedulers.ServiceContext
 
 import scala.concurrent.Future

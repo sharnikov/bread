@@ -1,5 +1,7 @@
 package ru.bread.database.settings
 
+import java.io.File
+
 import com.github.mauricio.async.db.Configuration
 import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
 import com.github.mauricio.async.db.postgresql.pool.PostgreSQLConnectionFactory
@@ -15,7 +17,7 @@ import scala.concurrent.ExecutionContext
 
 class DatabaseSettings extends DatabaseContext {
 
-  private val postgresConfig = PostgresConfig(ConfigFactory.load("db"), context)
+  private val postgresConfig = PostgresConfig(ConfigFactory.parseFile(new File("src/main/resources/db.conf")), context)
 
   val pgContext = new PostgresAsyncContext(Escape, postgresConfig.pool)
 }

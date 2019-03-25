@@ -13,7 +13,7 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
   )
 
   val typesafeConfig = Seq(
-    "com.typesafe" % "config" % "1.3.2",
+    "com.typesafe" % "config" % "1.3.3",
     "com.iheart" %% "ficus" % "1.4.0"
   )
 
@@ -23,6 +23,7 @@ object Dependencies extends DependencyBuilders with LibraryManagementSyntax {
   )
 
   val akka = Seq(
+    "com.typesafe.akka" %% "akka-http-caching" % akkaVersion,
     "com.typesafe.akka" %% "akka-http" % akkaVersion,
     "com.typesafe.akka" %% "akka-http-xml" % akkaVersion,
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaVersion,

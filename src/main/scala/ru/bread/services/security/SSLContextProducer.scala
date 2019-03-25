@@ -1,10 +1,10 @@
-package ru.bread.services.internal
+package ru.bread.services.security
 
 import java.io.{FileInputStream, IOException, InputStream}
 import java.security.{KeyStore, SecureRandom}
 
-import akka.http.scaladsl.{ConnectionContext, HttpsConnectionContext}
 import akka.http.scaladsl.UseHttp2.Negotiated
+import akka.http.scaladsl.{ConnectionContext, HttpsConnectionContext}
 import akka.stream.TLSClientAuth.Want
 import com.typesafe.scalalogging.LazyLogging
 import javax.net.ssl.{KeyManagerFactory, SSLContext, TrustManagerFactory}

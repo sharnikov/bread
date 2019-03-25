@@ -41,7 +41,7 @@ class OrdersDAOImpl(db: PostgresSchemaAssessor) extends OrdersDAO with DatabaseC
     for {
       orders <- run(orders.filter(order => order.userId == lift(userId) && order.id.contains(lift(orderId))))
       order = orders.headOption.getOrElse(
-        throw new DatabaseDataNotFoundException(s"There is no order with such an orderId = $orderId")
+        throw new DatabaseDataNotFoundException(s"There is no order with such an orderId = $orderId for this user")
       )
       goodsWithQuantity <- run(
         items.filter(item =>  item.orderId.contains(lift(orderId)))
