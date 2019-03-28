@@ -1,11 +1,9 @@
 package ru.bread.database.services
 
-import com.github.mauricio.async.db.postgresql.PostgreSQLConnection
 import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.OrderStatus.Status
 import ru.bread.database._
 import ru.bread.database.schema.PostgresSchemaAssessor
-import ru.bread.database.settings.DatabaseSettings.PgAsyncSchema
 import ru.bread.errors.AppError.DatabaseDataNotFoundException
 import ru.bread.http.response.Completed
 import ru.bread.services.Domain.Id

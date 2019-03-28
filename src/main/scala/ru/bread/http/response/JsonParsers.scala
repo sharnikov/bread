@@ -5,7 +5,7 @@ import ru.bread.database.{Good, Item}
 import ru.bread.services._
 import spray.json.DefaultJsonProtocol
 
-object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport with TimeJsonParser {
+object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport with TimeUtils {
 
   implicit val idResponseFormat = jsonFormat1(ResponseWithId)
 

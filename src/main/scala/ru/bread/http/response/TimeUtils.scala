@@ -8,7 +8,7 @@ import spray.json.{JsString, JsValue, RootJsonFormat}
 
 import scala.util.Try
 
-trait TimeJsonParser {
+trait TimeUtils {
 
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
@@ -26,4 +26,4 @@ trait TimeJsonParser {
   private def parseIsoDateString(date: String): Option[Date] = Try{ dateFormat.parse(date) }.toOption
 }
 
-object TimeJsonParser extends TimeJsonParser
+object TimeUtils extends TimeUtils

@@ -4,7 +4,7 @@ import java.util.Date
 
 import ru.bread.errors.AppError
 import ru.bread.errors.AppError.ParseFailedException
-import ru.bread.http.response.TimeJsonParser._
+import ru.bread.http.response.TimeUtils._
 import spray.json.{JsObject, JsString, JsValue, JsonFormat, JsonWriter, RootJsonReader, RootJsonWriter}
 
 trait Response[+A]

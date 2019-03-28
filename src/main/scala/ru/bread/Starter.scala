@@ -24,7 +24,7 @@ object Starter extends App with MainContext with LazyLogging {
   schedule.start()
   logger.info("Scheduled manager initialized")
 
-  val routesBuilder = new RoutesBuilderImpl(Seq(authorizationModule, ordersModule))
+  val routesBuilder = new RoutesBuilderImpl(Seq(authorizationModule, ordersModule), commonModule)
   logger.info("Routes initialized")
 
   val routesModule = new RoutesModule(commonModule, routesBuilder.routes(), settings)

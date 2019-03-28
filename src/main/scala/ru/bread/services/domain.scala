@@ -2,8 +2,8 @@ package ru.bread.services
 
 import java.util.Date
 
-import ru.bread.database.{Good, Item}
 import io.getquill.Embedded
+import ru.bread.database.Good
 import ru.bread.services.Domain.Id
 
 object Domain {
