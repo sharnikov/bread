@@ -15,7 +15,7 @@ class RoutesBuilderImpl(modules: Seq[ModuleWithRoutes], commonModule: CommonModu
   with RoutesSettings {
 
   override def routes(): Route = Route.seal(
-    respondWithHeader(Date(DateTime(commonModule.timeProvider.currentTime.getTime))) {
+    mapResponseHeaders(_ :+ Date(DateTime(commonModule.timeProvider.currentTime.getTime))) {
       modules.map(_.routes()).reduceLeft(_ ~ _)
     }
   )
