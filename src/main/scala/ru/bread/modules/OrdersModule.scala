@@ -1,6 +1,5 @@
 package ru.bread.modules
 
-import akka.http.scaladsl.server.directives.CachingDirectives._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import ru.bread.database.{Item, Role}

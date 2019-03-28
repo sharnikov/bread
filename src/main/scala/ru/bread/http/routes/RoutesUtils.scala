@@ -1,6 +1,6 @@
 package ru.bread.http.routes
 
-import akka.http.scaladsl.server.Directives.{complete, headerValueByName, onComplete}
+import akka.http.scaladsl.server.Directives.{complete, onComplete}
 import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
 import spray.json.JsonWriter

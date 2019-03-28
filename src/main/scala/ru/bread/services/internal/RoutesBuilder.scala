@@ -11,7 +11,9 @@ trait RoutesBuilder {
   def routes(): Route
 }
 
-class RoutesBuilderImpl(modules: Seq[ModuleWithRoutes], commonModule: CommonModule) extends RoutesBuilder with RoutesSettings {
+class RoutesBuilderImpl(modules: Seq[ModuleWithRoutes], commonModule: CommonModule) extends RoutesBuilder
+  with RoutesSettings {
+
   override def routes(): Route = Route.seal(
     respondWithHeader(Date(DateTime(commonModule.timeProvider.currentTime.getTime))) {
       modules.map(_.routes()).reduceLeft(_ ~ _)

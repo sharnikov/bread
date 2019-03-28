@@ -6,7 +6,6 @@ import com.typesafe.scalalogging.LazyLogging
 import ru.bread.errors.AppError.{DatabaseDataNotFoundException, ServiceException, VerboseServiceException}
 import ru.bread.http.response.Response._
 import ru.bread.http.response.JsonParsers._
-import ru.bread.errors.ErrorCode
 
 trait RoutesSettings extends LazyLogging {
 
@@ -14,9 +13,9 @@ trait RoutesSettings extends LazyLogging {
     case exception: VerboseServiceException =>
       logger.error(s"Failed with a verboseException with a message: ${exception.getMessage}", exception)
       complete(fail(exception))
-    case exception: DatabaseDataNotFoundException if exception.code == ErrorCode.DataNotFoundError =>
+    case exception: DatabaseDataNotFoundException =>
       logger.error(s"Unable to find a data in the DB with a message: ${exception.getMessage}", exception)
-      complete(fail(exception))
+      complete(fail(new ServiceException("Internal exception", exception)))
     case exception =>
       logger.error(s"Failed with an exception with a message: ${exception.getMessage}", exception)
       complete(fail(new ServiceException("Internal exception", exception)))
