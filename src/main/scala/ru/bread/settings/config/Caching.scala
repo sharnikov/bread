@@ -5,7 +5,7 @@ import Settings._
 
 import scala.concurrent.duration.Duration
 
-trait Cache extends ConfigExtractor {
+trait Cache {
   def maxCapacity(): Int
   def initCapacity(): Int
   def lifetimePeriod(): Duration
@@ -17,5 +17,4 @@ class CacheSettings(config: Config) extends Cache {
   override def initCapacity(): Int = config.getInt("initial.capacity")
   override def lifetimePeriod(): Duration = config.getDuration("lifetime.period").toScalaDuration()
   override def idletimePeriod(): Duration = config.getDuration("idle.period").toScalaDuration()
-  override def getConfig(): Config = config
 }
