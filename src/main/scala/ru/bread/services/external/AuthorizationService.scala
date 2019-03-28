@@ -71,7 +71,9 @@ class BasicAuthorizationService(userDAO: UserDAO,
       sessionId,
       (_: String, oldValue: Session) => oldValue.copy(expireDate = timeProvider.currentTime)
     )
-    if (!sessions.containsKey(sessionId)) throw new VerboseServiceException(ErrorCode.AuthorizationError, "Session is not valid")
+    if (!sessions.containsKey(sessionId))
+      throw new VerboseServiceException(ErrorCode.AuthorizationError, "Session is not valid")
+
     sessions.get(sessionId)
   }
 }

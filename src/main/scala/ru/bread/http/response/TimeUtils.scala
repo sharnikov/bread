@@ -23,7 +23,7 @@ trait TimeUtils {
   }
 
   private def dateToIsoString(date: Date): String = dateFormat.format(date)
-  private def parseIsoDateString(date: String): Option[Date] = Try{ dateFormat.parse(date) }.toOption
+  private def parseIsoDateString(date: String): Option[Date] = Try { dateFormat.parse(date) }.toOption
 }
 
 object TimeUtils extends TimeUtils

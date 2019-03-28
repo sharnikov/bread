@@ -1,7 +1,7 @@
 package ru.bread.services.caching
 
 import akka.http.caching.LfuCache
-import akka.http.caching.scaladsl.{Cache, CachingSettings}
+import akka.http.caching.scaladsl.Cache
 import akka.http.scaladsl.model.Uri
 import akka.http.scaladsl.server.directives.CachingDirectives._
 import akka.http.scaladsl.server.{RequestContext, Route, RouteResult}

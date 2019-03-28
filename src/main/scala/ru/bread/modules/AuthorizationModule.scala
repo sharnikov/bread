@@ -8,7 +8,6 @@ import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.User
 import ru.bread.database.services.{UserDAO, UserDAOImpl}
 import ru.bread.http.routes.RoutesUtils
-import ru.bread.http.response.Response._
 import ru.bread.http.response.JsonParsers._
 import ru.bread.modules.AuthorizationModule.{Session, SessionStorage}
 import ru.bread.services.external.{AuthorizationService, BasicAuthorizationService}
@@ -34,7 +33,7 @@ class AuthorizationModule(dbModule: DatabaseModule,
     authenticateBasicAsync("ordersAuth", authorizationService.authorize) { sessionId =>
         post {
           path("sign_up") {
-            complete(success(sessionId))
+            complete(sessionId)
           }
       }
     }
