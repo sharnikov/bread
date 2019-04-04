@@ -42,7 +42,7 @@ class SimpleSSLContextProducer(settings: Settings) extends SSLContextProducer wi
     val sslContext = SSLContext.getInstance(sslSettings.sslAlgorithm)
     sslContext.init(keyManagerFactory.getKeyManagers, trustManager.getTrustManagers, new SecureRandom)
 
-    val connectionContext: ConnectionContext = new HttpsConnectionContext(
+    new HttpsConnectionContext(
       sslContext = sslContext,
       sslConfig = None,
       enabledCipherSuites = None,
@@ -51,8 +51,6 @@ class SimpleSSLContextProducer(settings: Settings) extends SSLContextProducer wi
       sslParameters = None,
       http2 = Negotiated
     )
-
-    connectionContext
   }
 
   private def wrapStream(stream: InputStream, f: InputStream => Unit) =
