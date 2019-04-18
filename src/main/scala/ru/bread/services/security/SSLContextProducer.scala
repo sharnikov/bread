@@ -37,7 +37,6 @@ class SimpleSSLContextProducer(settings: Settings) extends SSLContextProducer wi
 
     val trustManager = TrustManagerFactory.getInstance(sslSettings.trustManagerAlgorithm)
     trustManager.init(keystore)
-    trustManager.getTrustManagers
 
     val sslContext = SSLContext.getInstance(sslSettings.sslAlgorithm)
     sslContext.init(keyManagerFactory.getKeyManagers, trustManager.getTrustManagers, new SecureRandom)
