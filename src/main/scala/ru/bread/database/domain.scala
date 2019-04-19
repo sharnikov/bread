@@ -39,6 +39,7 @@ case class Good(id: Id, name: String, category: String, price: Double) extends E
 case class User(id: Id,
                 login: String,
                 password: String,
+                mail: String,
                 name: Option[String],
                 secondName: Option[String],
                 role: Role

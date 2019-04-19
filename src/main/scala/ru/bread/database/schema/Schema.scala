@@ -39,6 +39,7 @@ trait Schema[D <: Idiom, N <: NamingStrategy] {
     querySchema[User]("users",
       _.id -> "id",
       _.login -> "login",
+      _.mail -> "mail",
       _.name -> "name",
       _.secondName -> "secondname",
       _.password -> "password",
