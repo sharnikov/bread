@@ -8,12 +8,10 @@ import ru.bread.http.routes.RoutesUtils
 import ru.bread.modules.ModuleWithRoutes
 import ru.bread.services.external.AuthorizationService
 import ru.bread.services.internal.ValidationService
-import ru.bread.settings.config.Settings
 import ru.bread.settings.schedulers.MainContext
 
 class AuthorizationRoutes(authorizationService: AuthorizationService,
-                          validationService: ValidationService,
-                          settings: Settings) extends ModuleWithRoutes with RoutesUtils with LazyLogging
+                          validationService: ValidationService) extends ModuleWithRoutes with RoutesUtils with LazyLogging
   with MainContext {
 
   override def name(): String = "Authorization routes module"
@@ -28,7 +26,7 @@ class AuthorizationRoutes(authorizationService: AuthorizationService,
     } ~ post {
       path("register_user") {
         entity(as[RegistrationUser]) { user =>
-          complete(
+          completeResult(
             for {
               _ <- validationService.validateUser(user)
               result <- authorizationService.registerNewUser(user)

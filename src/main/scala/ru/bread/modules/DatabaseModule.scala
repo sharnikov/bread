@@ -6,7 +6,7 @@ import ru.bread.database.settings.DatabaseSettings
 import ru.bread.settings.config.Settings
 
 class DatabaseModule(settings: Settings) extends Module {
-  override def name(): String = "Database"
+  override def name(): String = "Database module"
 
   private val dbSettings = new DatabaseSettings()
 

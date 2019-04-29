@@ -10,7 +10,7 @@ class SchedulerModule(sessions: SessionStorage,
                       timeProvider: TimeProvider,
                       updatableSettings: UpdatableAppSettings) extends Module {
 
-  override def name(): String = "Scheduler"
+  override def name(): String = "Scheduler module"
 
   val taskFactory = new TaskFactoryImpl(authorizationModule.sessions, commonModule.timeProvider, updatableSettings)
   val schedule = new SimpleScheduledTaskManager(taskFactory, updatableSettings)

@@ -27,8 +27,7 @@ object Starter extends App with MainContext with LazyLogging {
 
   val authorizationRoutes = new AuthorizationRoutes(
     authorizationModule.authorizationService,
-    commonModule.validationService,
-    updatableSettings
+    commonModule.validationService
   )
 
   val ordersModule = new OrdersModule(dbModule.ordersDao, commonModule.timeProvider)

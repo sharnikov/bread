@@ -9,7 +9,7 @@ import ru.bread.services.security.SSLContextProducer
 import ru.bread.settings.config.Settings
 
 class RoutesModule(sslContextProducer: SSLContextProducer, routes: Route, settings: Settings) extends Module {
-  override def name(): String = "Routes"
+  override def name(): String = "Routes module"
 
   implicit val system: ActorSystem = ActorSystem("bread")
   logger.info("ActorSystem initialized")

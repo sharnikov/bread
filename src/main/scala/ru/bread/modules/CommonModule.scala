@@ -7,7 +7,7 @@ import ru.bread.services.security._
 import ru.bread.settings.config.Settings
 
 class CommonModule(userDao: UserDAO, settings: Settings) extends Module {
-  override def name(): String = "Common"
+  override def name(): String = "Common module"
 
   val timeProvider: TimeProvider = new SystemTimeProvider(settings)
   val encryptService: EncryptService = new MD5EncryptService(settings)
