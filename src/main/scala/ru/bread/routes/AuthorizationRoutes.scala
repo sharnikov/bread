@@ -17,13 +17,7 @@ class AuthorizationRoutes(authorizationService: AuthorizationService,
   override def name(): String = "Authorization routes module"
 
   override def routes() =
-    authenticateBasicAsync("ordersAuth", authorizationService.authorize) { sessionId =>
-        post {
-          path("sign_up") {
-            complete(sessionId)
-          }
-      }
-    } ~ post {
+    post {
       path("register_user") {
         entity(as[RegistrationUser]) { user =>
           completeResult(
@@ -33,6 +27,12 @@ class AuthorizationRoutes(authorizationService: AuthorizationService,
             } yield result
           )
         }
+      }
+    } ~ authenticateBasicAsync("ordersAuth", authorizationService.authorize) { sessionId =>
+        post {
+          path("sign_up") {
+            complete(sessionId)
+          }
       }
     }
 }
