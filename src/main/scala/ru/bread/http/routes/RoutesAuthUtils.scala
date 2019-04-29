@@ -8,10 +8,10 @@ import ru.bread.services.external.AuthorizationService
 
 trait RoutesAuthUtils extends LazyLogging {
 
-  def authService(): AuthorizationService
+  val authorizationService: AuthorizationService
 
   def authWithToken(routesToAuth: User => Route): Route = headerValueByName("sessionid") { token =>
-    val user = authService().userBySessionId(token)
+    val user = authorizationService.userBySessionId(token)
     logger.info(s"User ${user.id} was successfully authenticated")
     routesToAuth(user)
   }

@@ -7,4 +7,5 @@ object ErrorCode {
   case object DataNotFoundError extends ErrorCode
   case object AuthorizationError extends ErrorCode
   case object ParsingError extends ErrorCode
+  case object ValidationError extends ErrorCode
 }

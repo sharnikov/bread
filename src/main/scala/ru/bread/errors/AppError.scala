@@ -24,4 +24,7 @@ object AppError {
 
   class AuthorizationException(message: String = "", cause: Throwable = null)
     extends VerboseServiceException(ErrorCode.AuthorizationError, message, cause)
+
+  class ValidationException(message: String = "", cause: Throwable = null) extends
+    VerboseServiceException(ErrorCode.ValidationError, message, cause)
 }

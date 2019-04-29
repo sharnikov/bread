@@ -3,40 +3,30 @@ package ru.bread.modules
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
 
-import akka.http.scaladsl.server.Directives._
-import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.User
-import ru.bread.database.services.{UserDAO, UserDAOImpl}
-import ru.bread.http.routes.RoutesUtils
-import ru.bread.http.response.JsonParsers._
+import ru.bread.database.services.UserDAO
 import ru.bread.modules.AuthorizationModule.{Session, SessionStorage}
 import ru.bread.services.external.{AuthorizationService, BasicAuthorizationService}
-import ru.bread.settings.config.Settings
+import ru.bread.services.internal.TimeProvider
+import ru.bread.services.security.{EncryptService, SessionGenerator}
 
-class AuthorizationModule(dbModule: DatabaseModule,
-                          commonModule: CommonModule,
-                          settings: Settings) extends ModuleWithRoutes with RoutesUtils with LazyLogging {
-  override def name(): String = "Authorization"
+class AuthorizationModule(userDao: UserDAO,
+                          sessionGenerator: SessionGenerator,
+                          encryptService: EncryptService,
+                          timeProvider: TimeProvider) extends Module {
+
+  override def name(): String = "Authorization module"
 
   val sessions: SessionStorage = new ConcurrentHashMap[String, Session]()
 
-  val userDao: UserDAO = new UserDAOImpl(dbModule.schemaAssessor)
   val authorizationService: AuthorizationService = new BasicAuthorizationService(
     userDAO = userDao,
-    sessionGenerator = commonModule.sessionGenerator,
-    encryptService = commonModule.encryptService,
-    timeProvider = commonModule.timeProvider,
+    sessionGenerator = sessionGenerator,
+    encryptService = encryptService,
+    timeProvider = timeProvider,
     sessions = sessions
   )
 
-  override def routes() =
-    authenticateBasicAsync("ordersAuth", authorizationService.authorize) { sessionId =>
-        post {
-          path("sign_up") {
-            complete(sessionId)
-          }
-      }
-    }
 }
 
 object AuthorizationModule {

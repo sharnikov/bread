@@ -42,6 +42,10 @@ case class User(id: Id,
                 mail: String,
                 name: Option[String],
                 secondName: Option[String],
-                role: Role
-               )
+                role: Role)
 
+case class RegistrationUser(login: String,
+                            password: String,
+                            mail: String,
+                            name: Option[String],
+                            secondName: Option[String])

@@ -3,10 +3,11 @@ package ru.bread.services.external
 import akka.http.scaladsl.server.directives.Credentials
 import akka.http.scaladsl.server.directives.Credentials.Provided
 import com.typesafe.scalalogging.LazyLogging
-import ru.bread.database.User
+import ru.bread.database.{RegistrationUser, User}
 import ru.bread.database.services.UserDAO
 import ru.bread.errors.AppError.{AuthorizationException, VerboseServiceException}
 import ru.bread.errors.ErrorCode
+import ru.bread.http.response.Completed
 import ru.bread.modules.AuthorizationModule.{Session, SessionStorage}
 import ru.bread.services.SessionId
 import ru.bread.services.internal.TimeProvider
@@ -18,6 +19,7 @@ import scala.concurrent.Future
 trait AuthorizationService {
   def authorize(credential: Credentials): Future[Option[SessionId]]
   def userBySessionId(sessionId: String): User
+  def registerNewUser(user: RegistrationUser): Future[Completed]
 }
 
 class BasicAuthorizationService(userDAO: UserDAO,
@@ -76,4 +78,15 @@ class BasicAuthorizationService(userDAO: UserDAO,
 
     sessions.get(sessionId)
   }
+
+
+  override def registerNewUser(user: RegistrationUser): Future[Completed] = {
+    val userToSave = user.copy(
+      password = encryptService.encrypt(user.password),
+      name = user.name.map(_.capitalize),
+      secondName = user.secondName.map(_.toLowerCase().capitalize)
+    )
+    userDAO.registerNewUser(userToSave)
+  }
+
 }
