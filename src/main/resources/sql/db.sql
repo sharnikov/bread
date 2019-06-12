@@ -26,7 +26,7 @@ CREATE TABLE USERS
 );
 
 insert into USERS (login, name, secondname) values
-('Bulkaed', 'Андрей', 'Петров')
+('Bulkaed', 'Андрей', 'Петров'),
 ('Kekser', 'Вова', 'Путин');
 
 select * from USERS;
@@ -91,6 +91,7 @@ alter table users add column mail varchar(100) unique;
 select * from USERS;
 update USERS set mail = 'azaz@mail.com' where id = 1;
 update USERS set mail = 'loverussia@mail.com' where id = 3;
+update USERS set mail = 'loverussiareally@mail.com' where id = 2;
 alter table USERS alter column mail set not null;
 
 --------------------------------------------
