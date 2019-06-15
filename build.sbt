@@ -8,6 +8,7 @@ lazy val settings = Seq(
 lazy val root = (project in file("."))
     .settings(
       settings,
+      resourceDirectory := baseDirectory.value / "resources",
       scalacOptions := Seq("-language:higherKinds"),
       libraryDependencies ++= Dependencies.all
     )
