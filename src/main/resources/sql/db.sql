@@ -78,7 +78,7 @@ create type roles AS ENUM ('ADMIN', 'CLIENT', 'GOD', 'TRUSTED_CLIENT');
 alter table USERS add column role roles not null default 'CLIENT';
 update USERS set role = 'ADMIN' where id = 1;
 insert into USERS (login, name, secondname, password) values
-('Vovan', 'Вовка', 'Нитуп', 'russia');
+('Vovan', 'Вовка', 'Нитуп', '808eff5ebde0649b4327d7cbaa32334c');
 
 -----------------------------------
 --add order creation time
