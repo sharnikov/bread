@@ -69,8 +69,7 @@ alter table ORDERS add column status order_status not null default 'NEW';
 --------------------------------------------
 
 --add password to users
-alter table USERS add column password varchar(100) not null default '';
-update USERS set password = 'f6bcd09265d6ca53c14b3ce87d3f177b' where id = 1;
+alter table USERS add column password varchar(100) not null default '808eff5ebde0649b4327d7cbaa32334c';
 ALTER TABLE USERS ALTER COLUMN password DROP DEFAULT;
 ----------------------------------
 
