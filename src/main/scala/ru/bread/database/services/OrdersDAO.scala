@@ -50,6 +50,7 @@ class OrdersDAOImpl(db: PostgresSchemaAssessor) extends OrdersDAO with DatabaseC
       OrderItems(
         packs = goodsWithQuantity,
         creationDate = order.creationDate,
+        status = order.status
       )
     }
 

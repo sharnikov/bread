@@ -32,7 +32,8 @@ object OrdersTestData {
 
   val orderItems = OrderItems(
     packs = listOfFullGoodPacks,
-    creationDate = time
+    creationDate = time,
+    status = OrderStatus.IN_PROGRESS
   )
 
   val fullOrder = FullOrder(
@@ -40,6 +41,7 @@ object OrdersTestData {
     id = orderId,
     packs = listOfFullGoodPacks,
     creationDate = time,
+    status = OrderStatus.IN_PROGRESS.toString,
     totalPrice = 618
   )
 

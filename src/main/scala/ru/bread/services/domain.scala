@@ -4,6 +4,7 @@ import java.util.Date
 
 import io.getquill.Embedded
 import ru.bread.database.Good
+import ru.bread.database.OrderStatus.Status
 import ru.bread.services.Domain.Id
 
 object Domain {
@@ -20,10 +21,12 @@ case class FullOrder(userId: Id,
                      id: Id,
                      packs: Seq[FullGoodPack],
                      creationDate: Date,
+                     status: String,
                      totalPrice: Double)
 
 case class OrderItems(packs: Seq[FullGoodPack],
-                      creationDate: Date)
+                      creationDate: Date,
+                      status: Status)
 
 case class GoodsPack(quantity: Int, goodId: Id) extends Embedded
 

@@ -1,5 +1,5 @@
-package ru.bread.http.response
 
+package ru.bread.http.response
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import ru.bread.database.{Good, Item, RegistrationUser}
 import ru.bread.services._
@@ -15,7 +15,7 @@ object JsonParsers extends DefaultJsonProtocol with SprayJsonSupport with TimeUt
 
   implicit val fullGoodpackFormat = jsonFormat2(FullGoodPack)
 
-  implicit val fullOrderFormat = jsonFormat5(FullOrder)
+  implicit val fullOrderFormat = jsonFormat6(FullOrder)
 
   implicit val goodsPackFormat = jsonFormat2(GoodsPack)
 

@@ -32,6 +32,7 @@ class OrdersServiceImpl(dao: OrdersDAO, timeProvider: TimeProvider) extends Orde
         id = orderId,
         packs = orderItems.packs,
         creationDate = orderItems.creationDate,
+        status = orderItems.status.toString,
         totalPrice = orderItems.packs.map(pack => pack.good.price * pack.quantity).sum
       )
     }
