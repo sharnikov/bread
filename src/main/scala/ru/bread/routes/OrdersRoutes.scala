@@ -36,38 +36,40 @@ class OrdersRoutes(ordersService: OrdersService,
       }
     } ~
     post {
-      authWithToken { user =>
-        invalidateByUser(user) {
-          authorize(user.role == Role.CLIENT) {
-            path("add_order") {
-              entity(as[Seq[GoodsPack]]) { goodsPack =>
-                completeResult(ordersService.addOrder(user.id, goodsPack))
-              }
-            } ~
-            path("add_item") {
-              entity(as[Item]) { newItem =>
-                completeResult(ordersService.addItemToOrder(user.id, newItem))
-              }
-            } ~
-            path("remove_item") {
-              entity(as[Item]) { newItem =>
-                completeResult(ordersService.removeItemFromOrder(user.id, newItem))
-              }
-            }
-          } ~
-          authorize(user.role == Role.CLIENT || user.role == Role.ADMIN) {
-            path("change_status") {
-                parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
-                  completeResult(ordersService.changeStatus(orderId, status))
+      pathPrefix("order") {
+        authWithToken { user =>
+          invalidateByUser(user) {
+            authorize(user.role == Role.CLIENT) {
+              path("add_order") {
+                entity(as[Seq[GoodsPack]]) { goodsPack =>
+                  completeResult(ordersService.addOrder(user.id, goodsPack))
+                }
+              } ~
+              path("add_item") {
+                entity(as[Item]) { newItem =>
+                  completeResult(ordersService.addItemToOrder(user.id, newItem))
+                }
+              } ~
+              path("remove_item") {
+                entity(as[Item]) { newItem =>
+                  completeResult(ordersService.removeItemFromOrder(user.id, newItem))
                 }
               }
-          }
-        } ~
-        cacheRouteByUser(user) {
-          path("order_by_id") {
-            parameters('orderId.as[Id]) { orderId =>
-              completeResult(ordersService.getOrderById(user.id, orderId))
+            } ~
+            authorize(user.role == Role.CLIENT || user.role == Role.ADMIN) {
+              path("change_status") {
+                  parameters('orderId.as[Id], 'status.as[Status]) { (orderId, status) =>
+                    completeResult(ordersService.changeStatus(orderId, status))
+                  }
+                }
             }
+          } ~
+          cacheRouteByUser(user) {
+              path("order_by_id") {
+                parameters('orderId.as[Id]) { orderId =>
+                  completeResult(ordersService.getOrderById(user.id, orderId))
+                }
+              }
           }
         }
       }

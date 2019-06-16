@@ -1,6 +1,7 @@
 package ru.bread.routes
 
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
 import ru.bread.database.RegistrationUser
 import ru.bread.http.response.JsonParsers._
@@ -16,7 +17,7 @@ class AuthorizationRoutes(authorizationService: AuthorizationService,
 
   override def name(): String = "Authorization routes module"
 
-  override def routes() =
+  override def routes(): Route =
     post {
       path("register_user") {
         entity(as[RegistrationUser]) { user =>
@@ -27,12 +28,10 @@ class AuthorizationRoutes(authorizationService: AuthorizationService,
             } yield result
           )
         }
-      }
-    } ~ authenticateBasicAsync("ordersAuth", authorizationService.authorize) { sessionId =>
-        post {
-          path("sign_up") {
-            complete(sessionId)
-          }
+      } ~ path("sign_up") {
+        authenticateBasicAsync("ordersAuth", authorizationService.authorize) { sessionId =>
+          complete(sessionId)
+        }
       }
     }
 }
